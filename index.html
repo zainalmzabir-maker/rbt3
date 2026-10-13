@@ -156,7 +156,7 @@
             <input 
               type="password" 
               id="icInput" 
-              placeholder="Contoh: 111016010759" 
+              placeholder="Masukkan No. Kad Pengenalan" 
               required 
               class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-sky-500 bg-slate-50" 
             />
@@ -315,6 +315,59 @@
           </div>
         </div>
 
+        <!-- Rekod Murid Menjawab Kuiz -->
+        <div class="border rounded-xl p-3 bg-slate-50">
+          <div class="flex justify-between items-center mb-1.5">
+            <h4 class="text-xs font-black text-slate-700 uppercase flex items-center gap-1.5">
+              <i class="fa-solid fa-list-check text-sky-600"></i> Rekod Murid Menjawab Kuiz
+            </h4>
+            <button onclick="fetchAdminQuizRecords()" class="text-xs text-sky-600 font-bold hover:underline">
+              <i class="fa-solid fa-arrows-rotate"></i> Muat Semula
+            </button>
+          </div>
+          <div class="overflow-x-auto border rounded-xl max-h-48 bg-white">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 border-b text-slate-700 font-bold sticky top-0">
+                <tr>
+                  <th class="p-2">Masa</th>
+                  <th class="p-2">Nama Murid</th>
+                  <th class="p-2 text-center">Skor</th>
+                  <th class="p-2 text-center">Keputusan</th>
+                </tr>
+              </thead>
+              <tbody id="quizRecordsTableBody">
+                <tr><td colspan="4" class="p-3 text-center text-slate-400">Memuatkan data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Rekod Tekaan Gambar -->
+        <div class="border rounded-xl p-3 bg-slate-50">
+          <div class="flex justify-between items-center mb-1.5">
+            <h4 class="text-xs font-black text-slate-700 uppercase flex items-center gap-1.5">
+              <i class="fa-solid fa-lightbulb text-amber-500"></i> Rekod Tekaan Gambar
+            </h4>
+            <button onclick="fetchAdminGuesses()" class="text-xs text-sky-600 font-bold hover:underline">
+              <i class="fa-solid fa-arrows-rotate"></i> Muat Semula
+            </button>
+          </div>
+          <div class="overflow-x-auto border rounded-xl max-h-40 bg-white">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 border-b text-slate-700 font-bold sticky top-0">
+                <tr>
+                  <th class="p-2">Masa</th>
+                  <th class="p-2">Nama Murid</th>
+                  <th class="p-2">Tekaan</th>
+                </tr>
+              </thead>
+              <tbody id="guessesTableBody">
+                <tr><td colspan="3" class="p-3 text-center text-slate-400">Memuatkan data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- Muat Naik Gambar Baharu ke Google Drive -->
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 space-y-2">
           <h5 class="text-xs font-black text-amber-950 uppercase flex items-center gap-1.5">
@@ -332,33 +385,11 @@
         <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5 flex justify-between items-center">
           <div>
             <h5 class="text-xs font-black text-rose-800 uppercase">Set Semula Kuiz (Reset All)</h5>
-            <p class="text-[11px] text-rose-700">Tutup semula kesemua 12 jubin dan padamkan rekod status murid.</p>
+            <p class="text-[11px] text-rose-700">Tutup semula kesemua 12 jubin, kosongkan rekod aktiviti dan status murid.</p>
           </div>
           <button onclick="handleResetAllQuiz()" id="btnResetQuiz" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2 px-3.5 rounded-lg shadow">
             RESET SEMUA
           </button>
-        </div>
-
-        <!-- Rekod Tekaan -->
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <h4 class="text-xs font-black text-slate-700 uppercase">Rekod Tekaan Gambar</h4>
-            <button onclick="fetchAdminGuesses()" class="text-xs text-sky-600 font-bold hover:underline">Muat Semula</button>
-          </div>
-          <div class="overflow-x-auto border rounded-xl max-h-40">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100 border-b text-slate-700 font-bold sticky top-0">
-                <tr>
-                  <th class="p-2">Masa</th>
-                  <th class="p-2">Nama Murid</th>
-                  <th class="p-2">Tekaan</th>
-                </tr>
-              </thead>
-              <tbody id="guessesTableBody">
-                <tr><td colspan="3" class="p-3 text-center text-slate-400">Memuatkan data...</td></tr>
-              </tbody>
-            </table>
-          </div>
         </div>
 
       </div>
@@ -375,7 +406,7 @@
 
     // Senarai 49 Murid Kelas 3S1 dan 3S2
     let STUDENTS_DATA = [
-      // KELAS 3S1 (26 Murid)
+      // KELAS 3S1 (26 Murid)[cite: 2]
       { nama: "ADAM HAFIY BIN ROHAIZAD", noIc: "111016010759", ic: "111016010759", sudahBuka: false },
       { nama: "AHMAD IRFAN DANIEL BIN AHMAD FAZRIN", noIc: "111105010857", ic: "111105010857", sudahBuka: false },
       { nama: "CHIU YIT JEN", noIc: "110812010851", ic: "110812010851", sudahBuka: false },
@@ -403,7 +434,7 @@
       { nama: "RAM JAGANNATH A/L SURESH", noIc: "111113011083", ic: "111113011083", sudahBuka: false },
       { nama: "SOH FEI XUAN", noIc: "111005010358", ic: "111005010358", sudahBuka: false },
 
-      // KELAS 3S2 (23 Murid)
+      // KELAS 3S2 (23 Murid)[cite: 3]
       { nama: "ADRIAN", noIc: "111207060759", ic: "111207060759", sudahBuka: false },
       { nama: "AMMAR QALISH BIN KHAIRUL ANUAR", noIc: "111217010405", ic: "111217010405", sudahBuka: false },
       { nama: "FOM YU TONG", noIc: "111116011660", ic: "111116011660", sudahBuka: false },
@@ -626,6 +657,13 @@
         if (sel && sel.value === item.answer) score++;
       });
 
+      // Rerekodkan percubaan murid terus ke Google Apps Script / Sheet Admin
+      try {
+        fetch(`${SCRIPT_URL}?action=recordQuiz&nama=${encodeURIComponent(currentStudent.nama)}&skor=${score}&_t=${Date.now()}`);
+      } catch (err) {
+        console.warn("Gagal merekod:", err);
+      }
+
       document.getElementById("quizFormWrapper").classList.add("hidden");
       const modal = document.getElementById("quizResultModal");
       modal.classList.remove("hidden");
@@ -749,10 +787,11 @@
 
     function verifyAdmin() {
       const pass = document.getElementById("adminPassInput").value.trim();
-      if (pass === "adminrbt1") {
+      if (pass === "adminrbt3") {
         document.getElementById("adminLoginSection").classList.add("hidden");
         document.getElementById("adminDashboard").classList.remove("hidden");
         renderAdminPreviewGrid();
+        fetchAdminQuizRecords();
         fetchAdminGuesses();
       } else {
         document.getElementById("adminError").classList.remove("hidden");
@@ -773,6 +812,60 @@
           </span>
         `;
         board.appendChild(tileBox);
+      }
+    }
+
+    async function fetchAdminQuizRecords() {
+      const tbody = document.getElementById("quizRecordsTableBody");
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getQuizRecords&_t=${Date.now()}`);
+        const data = await res.json();
+        if (data.success && data.records && data.records.length > 0) {
+          tbody.innerHTML = "";
+          data.records.forEach(r => {
+            const isPass = r.skor === 15;
+            tbody.innerHTML += `
+              <tr class="border-b">
+                <td class="p-2 text-slate-500 whitespace-nowrap">${r.time}</td>
+                <td class="p-2 font-bold text-slate-800">${r.nama}</td>
+                <td class="p-2 text-center font-black ${isPass ? 'text-emerald-600' : 'text-slate-600'}">${r.skor} / 15</td>
+                <td class="p-2 text-center">
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${isPass ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                    ${isPass ? 'LULUS (15/15)' : 'BELUM LULUS'}
+                  </span>
+                </td>
+              </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-400">Tiada rekod jawapan murid lagi.</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-rose-500">Ralat memuat turun rekod.</td></tr>`;
+      }
+    }
+
+    async function fetchAdminGuesses() {
+      const tbody = document.getElementById("guessesTableBody");
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getGuesses&_t=${Date.now()}`);
+        const data = await res.json();
+        if (data.success && data.guesses && data.guesses.length > 0) {
+          tbody.innerHTML = "";
+          data.guesses.forEach(g => {
+            tbody.innerHTML += `
+              <tr class="border-b">
+                <td class="p-2 text-slate-500 whitespace-nowrap">${g.time}</td>
+                <td class="p-2 font-bold">${g.nama}</td>
+                <td class="p-2 text-sky-700 font-semibold">${g.tekaan}</td>
+              </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400">Tiada rekod tekaan.</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-rose-500">Ralat memuat turun tekaan.</td></tr>`;
       }
     }
 
@@ -829,7 +922,7 @@
     }
 
     async function handleResetAllQuiz() {
-      if (!confirm("AMARAN: Adakah anda pasti mahu set semula kesemua 12 jubin dan rekod status murid?")) return;
+      if (!confirm("AMARAN: Adakah anda pasti mahu set semula kesemua 12 jubin dan rekod murid?")) return;
       const btn = document.getElementById("btnResetQuiz");
       btn.disabled = true;
       try {
@@ -840,35 +933,13 @@
           if (el) el.classList.remove("unlocked");
         }
         renderAdminPreviewGrid();
+        fetchAdminQuizRecords();
+        fetchAdminGuesses();
         alert("Berjaya di-reset!");
       } catch (err) {
         alert("Ralat: " + err.message);
       } finally {
         btn.disabled = false;
-      }
-    }
-
-    async function fetchAdminGuesses() {
-      const tbody = document.getElementById("guessesTableBody");
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=getGuesses&_t=${Date.now()}`);
-        const data = await res.json();
-        if (data.success && data.guesses.length > 0) {
-          tbody.innerHTML = "";
-          data.guesses.forEach(g => {
-            tbody.innerHTML += `
-              <tr class="border-b">
-                <td class="p-2 text-slate-500">${g.time}</td>
-                <td class="p-2 font-bold">${g.nama}</td>
-                <td class="p-2 text-sky-700 font-semibold">${g.tekaan}</td>
-              </tr>
-            `;
-          });
-        } else {
-          tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400">Tiada rekod tekaan.</td></tr>`;
-        }
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-rose-500">Ralat memuat turun.</td></tr>`;
       }
     }
   </script>

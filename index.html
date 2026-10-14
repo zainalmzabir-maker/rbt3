@@ -1,1026 +1,1407 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WEBAPP PdPr RBT TINGKATAN 3</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome Icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Pentadbir Bertugas - SMK Kamarul Ariffin</title>
+  
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+
+  <!-- CSS Teroptimum (Ultra Ringan, Tiada Framework Berat) -->
   <style>
-    .ease-fluid {
-      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    :root {
+      --primary: #1e1b4b;
+      --primary-hover: #312e81;
+      --accent: #f59e0b;
+      --success: #059669;
+      --danger: #dc2626;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
     }
-    /* 12 Jubin Grid 3x4 Vertikal */
-    .tile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #0284c7, #0369a1);
-      color: #ffffff;
-      font-size: 1.8rem;
-      font-weight: 800;
-      border: 1.5px solid #082f49;
-      cursor: default;
-      user-select: none;
-      transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    
+    header { background-color: var(--primary); color: white; position: sticky; top: 0; z-index: 40; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .header-inner { max-width: 1024px; margin: 0 auto; padding: 10px 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+    .logo-area { display: flex; align-items: center; gap: 10px; }
+    .logo-img { width: 40px; height: 40px; object-fit: contain; background: white; border-radius: 6px; padding: 2px; }
+    .nav-tabs { display: flex; gap: 6px; }
+    .tab-btn { background: rgba(255,255,255,0.15); border: none; color: white; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .tab-btn.active, .tab-btn:hover { background: rgba(255,255,255,0.3); }
+
+    main { max-width: 1024px; width: 100%; margin: 16px auto; padding: 0 16px; flex: 1; }
+    .card { background: var(--surface); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; }
+    .card-accent { border-top: 4px solid var(--primary); }
+
+    /* Alert Dialog */
+    .alert-banner { display: none; padding: 14px 16px; border-radius: 8px; margin-bottom: 16px; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; }
+    .alert-warning { background-color: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
+    .alert-success { background-color: #d1fae5; border: 1px solid #10b981; color: #065f46; }
+
+    /* Jadual Banner */
+    .banner-jadual { background: linear-gradient(135deg, #1e1b4b, #2563eb); color: white; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; background: var(--accent); color: #1e1b4b; }
+    .guru-title { font-size: 20px; font-weight: 800; color: #fde047; margin: 4px 0; }
+
+    /* Form Styles */
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
+    input[type="text"], input[type="date"], select, textarea {
+      width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff;
     }
-    .tile .tile-sub {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      opacity: 0.9;
+    input:read-only { background-color: #f1f5f9; cursor: not-allowed; }
+    .radio-group { display: flex; gap: 14px; font-size: 13px; align-items: center; margin-top: 4px; }
+    .section-title { font-size: 13px; font-weight: 700; color: var(--primary); border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin: 16px 0 10px; }
+
+    /* Signature Area */
+    .sig-box { border: 2px dashed #94a3b8; border-radius: 8px; background: #fafafa; padding: 12px; margin-top: 14px; text-align: center; }
+    .signature-pad { border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; touch-action: none; cursor: crosshair; }
+
+    /* Buttons */
+    .btn { padding: 9px 18px; border-radius: 6px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-warning { background: #d97706; color: white; }
+    .btn-secondary { background: #e2e8f0; color: #334155; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+    /* Table */
+    .table-responsive { overflow-x: auto; margin-top: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: #f1f5f9; padding: 10px; text-align: left; font-weight: 700; font-size: 12px; color: #475569; border-bottom: 2px solid var(--border); }
+    td { padding: 10px; border-bottom: 1px solid #e2e8f0; }
+    tr:hover { background: #f8fafc; }
+
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 50; align-items: center; justify-content: center; padding: 16px; }
+    .modal { background: white; max-width: 440px; width: 100%; border-radius: 10px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+
+    /* Cetakan Laporan */
+    @media print {
+      body * { visibility: hidden; }
+      #printContainer, #printContainer * { visibility: visible; }
+      #printContainer { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+      .no-print { display: none !important; }
     }
-    .tile.unlocked {
-      background: transparent !important;
-      border-color: rgba(255, 255, 255, 0.2) !important;
-      color: transparent !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-      transform: scale(0.95);
-    }
-    .admin-tile-overlay {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background-color: rgba(15, 23, 42, 0.6);
-      border: 1.5px dashed #facc15;
-      color: #ffffff;
-      padding: 3px;
-      text-align: center;
-    }
+    .print-sheet { background: white; padding: 30px; max-width: 820px; margin: 0 auto; border: 1px solid #cbd5e1; font-size: 13px; line-height: 1.5; }
+
+    .hidden { display: none !important; }
+    footer { background: #e2e8f0; text-align: center; font-size: 11px; padding: 12px; color: #64748b; margin-top: auto; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+<body>
 
-  <!-- Header -->
-  <header class="bg-sky-900 text-white shadow-md sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
-      <div class="flex items-center gap-2.5">
-        <div class="w-10 h-10 rounded-xl bg-amber-400 text-sky-950 flex items-center justify-center font-black text-xl shadow">
-          <i class="fa-solid fa-microchip"></i>
-        </div>
+  <!-- Navigasi -->
+  <header class="no-print">
+    <div class="header-inner">
+      <div class="logo-area">
+        <img src="logo.png" alt="Logo" class="logo-img" onerror="this.classList.add('hidden')">
         <div>
-          <h1 class="text-base md:text-lg font-black tracking-wide leading-tight">
-            WEBAPP PdPr RBT TINGKATAN 3
-          </h1>
-          <p class="text-[11px] text-sky-200">Misi Teka Gambar Misteri &bull; Kuiz 15 Soalan (12 Jubin 3S1 &amp; 3S2)</p>
+          <h1 style="font-size:16px; font-weight:800; line-height:1.2;">SMK KAMARUL ARIFFIN</h1>
+          <p style="font-size:11px; opacity:0.8;">Sistem Pemantauan Pentadbir Bertugas 2026</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="refreshDataFromServer(true)" title="Kemas kini data" class="px-3 py-1.5 bg-sky-800 hover:bg-sky-700 text-xs font-semibold rounded-lg border border-sky-600 transition ease-fluid flex items-center gap-1.5">
-          <i id="syncIcon" class="fa-solid fa-arrows-rotate"></i> Kemaskini
-        </button>
-        <button onclick="openAdminModal()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-sky-950 text-xs font-bold rounded-lg transition ease-fluid flex items-center gap-1.5 shadow">
-          <i class="fa-solid fa-user-shield"></i> Panel Guru
-        </button>
+      <div class="nav-tabs">
+        <button onclick="switchTab('pengisian')" id="btn-tab-pengisian" class="tab-btn active">Pengisian</button>
+        <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="tab-btn">Dashboard</button>
+        <button onclick="switchTab('cetakan')" id="btn-tab-cetakan" class="tab-btn">Cetakan Laporan</button>
       </div>
     </div>
   </header>
 
-  <!-- Kandungan Utama -->
-  <main class="max-w-5xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+  <main>
 
-    <!-- BANNER PERINGATAN -->
-    <div class="bg-gradient-to-r from-sky-600 via-cyan-600 to-sky-700 text-white p-4 rounded-2xl shadow-md flex items-center gap-4">
-      <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-xl shrink-0">
-        <i class="fa-solid fa-puzzle-piece text-amber-300"></i>
-      </div>
-      <div class="text-xs md:text-sm font-bold leading-relaxed">
-        Jawab kesemua 15 soalan objektif dengan betul (15/15) untuk memilih dan membuka mana-mana 1 jubin yang masih belum terbuka. Setiap murid hanya dibenarkan membuka satu jubin sekali sahaja!
-      </div>
-    </div>
-
-    <!-- 1. PUZZLE MOSAIC 3x4 (12 JUBIN VERTIKAL) -->
-    <section id="puzzleSection" class="bg-white rounded-2xl shadow-sm p-5 md:p-6 border border-slate-200 ease-fluid space-y-5">
-      <div class="text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-sky-50 text-sky-800 text-xs font-bold rounded-full mb-2">
-          <span>SUSUNAN 3 &times; 4 (12 JUBIN MISTERI VERTIKAL)</span>
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+    <!-- ================= TAB 1: PENGISIAN ================= -->
+    <section id="tab-pengisian">
+      
+      <!-- Banner Dialog Amaran: Laporan Telah Diisi -->
+      <div id="alertLaporanWujud" class="alert-banner alert-warning">
+        <div>
+          <strong>⚠️ Laporan Telah Wujud Bagi Tarikh Ini!</strong>
+          <p id="alertLaporanDesc" style="margin-top:2px;">Laporan telah dihantar sebelum ini. Sila klik butang di sebelah untuk mengemaskini rekod tanpa bertindih.</p>
         </div>
-        <h2 class="text-lg md:text-xl font-black text-slate-800 mb-1">PUZZLE GAMBAR MISTERI RBT</h2>
-        <p class="text-xs md:text-sm text-slate-600 max-w-2xl mx-auto">
-          Setiap jubin yang berjaya dibuka akan kekal terbuka untuk tatapan rakan sekelas secara langsung!
-        </p>
+        <div style="display:flex; gap:6px;">
+          <button type="button" onclick="muatDataLaporanSediaAda()" class="btn btn-warning btn-sm">Muatkan Data</button>
+          <button type="button" onclick="tutupAlert()" class="btn btn-secondary btn-sm">Abaikan</button>
+        </div>
       </div>
 
-      <!-- Kotak Grid Puzzle 3x4 Vertikal -->
-      <div class="max-w-sm mx-auto">
-        <div class="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border-4 border-slate-900 shadow-xl bg-slate-900 flex items-center justify-center">
-          <img id="mainPuzzleImage" src="gambar2.png" alt="Gambar Rahsia" class="absolute inset-0 w-full h-full object-cover select-none z-10" />
-          <div id="puzzleBoard" class="absolute inset-0 grid grid-cols-3 grid-rows-4 gap-0.5 z-20">
-            <!-- 12 Jubin Dijana oleh JS -->
+      <div class="card card-accent">
+        <!-- Kepala Borang -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:12px; border-bottom:1px solid #e2e8f0; padding-bottom:12px;">
+          <img src="logo.png" alt="Logo" style="height:55px;" onerror="this.classList.add('hidden')">
+          <div style="text-align:center;">
+            <h2 style="font-size:17px; font-weight:800;">SMK KAMARUL ARIFFIN LABIS JOHOR</h2>
+            <p style="font-size:12px; font-weight:700; color:#475569;">BORANG PEMANTAUAN PENTADBIR BERTUGAS 2026</p>
           </div>
         </div>
-      </div>
 
-      <!-- Butang Meneka Gambar -->
-      <div class="max-w-md mx-auto text-center">
-        <button onclick="openGuessModal()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold py-3 px-6 rounded-xl shadow-md transition ease-fluid flex items-center justify-center gap-2 text-sm tracking-wide">
-          <i class="fa-solid fa-lightbulb text-yellow-200"></i> TEKA GAMBAR INI SEKARANG
-        </button>
-      </div>
-
-      <!-- BAHAGIAN HADAPAN: SENARAI JUBIN & MURID YANG TELAH MEMBUKA JUBIN -->
-      <div class="pt-5 border-t border-slate-100">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <h3 class="text-xs md:text-sm font-black text-slate-800 uppercase flex items-center gap-2">
-            <i class="fa-solid fa-award text-amber-500 text-base"></i> Senarai Jubin Yang Telah Dibuka
-          </h3>
-          <span id="tilesProgressBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800">
-            0 / 12 Jubin Terbuka
-          </span>
-        </div>
-
-        <!-- Grid Status 12 Jubin & Nama Murid -->
-        <div id="unlockedTilesListContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-          <!-- Dijana Secara Automatik & Segerak oleh JS -->
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. LOG MASUK & KUIZ RBT TINGKATAN 3 -->
-    <section id="quizSection" class="bg-white rounded-2xl shadow-sm p-5 md:p-8 border border-slate-200 ease-fluid">
-
-      <!-- Kad Log Masuk Murid -->
-      <div id="loginCard" class="max-w-md mx-auto">
-        <div class="text-center mb-5">
-          <div class="w-14 h-14 bg-sky-50 text-sky-700 rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl font-bold shadow-inner">
-            <i class="fa-solid fa-id-card"></i>
-          </div>
-          <h3 class="text-lg font-black text-slate-800">Log Masuk Murid 3S1 &amp; 3S2</h3>
-          <p class="text-xs text-slate-500 mt-0.5">
-            Pilih nama anda dan masukkan Nombor Kad Pengenalan tanpa tanda sempang (-).
-          </p>
-        </div>
-
-        <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4">
+        <!-- Banner Jadual Auto Atas -->
+        <div class="banner-jadual" style="margin-top:16px;">
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Murid</label>
-            <select id="studentSelect" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-sky-500 bg-slate-50">
-              <option value="">-- Memuatkan Senarai 49 Murid... --</option>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="badgeMinggu" class="badge">MINGGU 1</span>
+              <span id="labelTarikhMinggu" style="font-size:12px; opacity:0.9;"></span>
+            </div>
+            <div style="font-size:11px; margin-top:4px; opacity:0.8;">PENTADBIR BERTUGAS MINGGU INI:</div>
+            <div id="txtNamaGuruTop" class="guru-title">Memuatkan...</div>
+            <p style="font-size:11px; opacity:0.8; font-style:italic;">* Ditentukan mengikut jadual 2026. Anda boleh beralih ke input manual jika terdapat penggantian pentadbir.</p>
+          </div>
+          <div>
+            <label style="color:#e0e7ff; font-size:11px;">Pilihan Pantas Minggu:</label>
+            <select id="selectMingguJadual" onchange="onManualMingguChange()" style="background:#0f172a; color:#fff; border:1px solid #6366f1; padding:6px; font-size:12px;">
             </select>
           </div>
+        </div>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
-              Kata Laluan <span class="text-rose-600 font-bold lowercase">(tanpa sempang -)</span>
-            </label>
-            <input 
-              type="password" 
-              id="icInput" 
-              placeholder="Masukkan No. Kad Pengenalan" 
-              required 
-              class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-sky-500 bg-slate-50" 
-            />
-            <p class="text-[11px] text-slate-500 mt-1 font-semibold flex items-center gap-1">
-              <i class="fa-solid fa-circle-exclamation text-amber-500"></i> Peringatan: Masukkan angka nombor IC sahaja tanpa sebarang tanda sempang (-).
-            </p>
+        <!-- Borang -->
+        <form id="formLaporan" onsubmit="hantarBorang(event)">
+          <input type="hidden" id="reportId" value="">
+          <input type="hidden" id="statusPengesahanVal" value="Menunggu Pengesahan">
+          <input type="hidden" id="existingCreatedTimeVal" value="">
+
+          <!-- Bahagian Maklumat Tarikh & Kaedah Pentadbir Bertugas -->
+          <div style="background:#f1f5f9; padding:14px; border-radius:8px; margin-bottom:16px;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Tarikh Bertugas *</label>
+                <input type="date" id="tarikh" required onchange="onTarikhChange()">
+              </div>
+              <div class="form-group">
+                <label>Hari *</label>
+                <select id="hari" required>
+                  <option value="">Pilih Hari</option>
+                  <option>Ahad</option><option>Isnin</option><option>Selasa</option>
+                  <option>Rabu</option><option>Khamis</option><option>Jumaat</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Masa</label>
+                <input type="text" id="masa" placeholder="Cth: 7:20 PG - 2:00 PTG">
+              </div>
+            </div>
+
+            <!-- Kaedah Pilihan Pentadbir: Auto vs Manual -->
+            <div style="margin-top:10px; padding-top:10px; border-top:1px dashed #cbd5e1;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                <label style="margin-bottom:0; font-weight:800; color:var(--primary);">PENTADBIR BERTUGAS:</label>
+                <div class="radio-group" style="margin-top:0;">
+                  <label><input type="radio" name="modPentadbir" value="auto" checked onchange="toggleModPentadbir()"> Ikut Jadual 2026 (Auto)</label>
+                  <label><input type="radio" name="modPentadbir" value="manual" onchange="toggleModPentadbir()"> Input Manual / Pengganti</label>
+                </div>
+              </div>
+
+              <!-- Paparan Automatik -->
+              <div id="boxPentadbirAuto" class="form-group" style="margin-bottom:0;">
+                <input type="text" id="pentadbir" readonly style="font-weight:700; color:#1e1b4b;">
+                <small style="color:#64748b; font-size:11px;">* Nama dan minggu bertugas diisi automatik mengikut tarikh yang dipilih.</small>
+              </div>
+
+              <!-- Paparan Manual (Muncul jika pilih manual) -->
+              <div id="boxPentadbirManual" class="hidden" style="margin-top:6px;">
+                <div class="form-grid">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>Nama Pentadbir (Manual) *</label>
+                    <input type="text" id="namaPentadbirManual" placeholder="Cth: Cikgu Ahmad bin Razak" oninput="kemaskiniPentadbirManual()">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>Jawatan / Peranan *</label>
+                    <input type="text" id="jawatanPentadbirManual" list="listJawatan" placeholder="Cth: Penolong Kanan HEM / GKMP" oninput="kemaskiniPentadbirManual()">
+                    <datalist id="listJawatan">
+                      <option value="Pengetua">
+                      <option value="Penolong Kanan Pentadbiran">
+                      <option value="Penolong Kanan HEM">
+                      <option value="Penolong Kanan Kokurikulum">
+                      <option value="GKMP Bahasa">
+                      <option value="GKMP Sains & Matematik">
+                      <option value="GKMP Kemanusiaan">
+                      <option value="GKMP Teknik & Vokasional">
+                      <option value="Guru Pengganti">
+                    </datalist>
+                  </div>
+                </div>
+                <small style="color:#b45309; font-size:11px; margin-top:4px; display:block;">⚠️ Mod manual aktif: Nama dan jawatan ini akan direkodkan sebagai pentadbir bertugas rasmi bagi tarikh ini.</small>
+              </div>
+            </div>
           </div>
 
-          <button type="submit" class="w-full bg-sky-700 hover:bg-sky-800 text-white font-bold py-3 rounded-xl transition ease-fluid text-xs shadow flex items-center justify-center gap-2">
-            <i class="fa-solid fa-play"></i> MULA JAWAB 15 SOALAN RBT TINGKATAN 3
-          </button>
+          <div id="infoKemaskiniTerakhir" style="display:none; font-size:11px; color:#b45309; margin-bottom:12px; font-weight:600;">
+            🕒 Laporan ini pernah dikemaskini pada: <span id="txtKemaskiniTerakhir">-</span>
+          </div>
+
+          <!-- 1. Kehadiran -->
+          <div class="section-title">1. KEHADIRAN</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Kehadiran Guru</label>
+              <input type="text" id="kehadiranGuru" placeholder="Cth: 48 / 50 orang">
+            </div>
+            <div class="form-group">
+              <label>Kehadiran Murid</label>
+              <input type="text" id="kehadiranMurid" placeholder="Cth: 95.2%">
+            </div>
+            <div class="form-group">
+              <label>Guru Lewat Hadir (jika ada)</label>
+              <input type="text" id="guruLewat" placeholder="Senarai nama / bilangan">
+            </div>
+            <div class="form-group">
+              <label>Murid Lewat Hadir (anggaran)</label>
+              <input type="text" id="muridLewat" placeholder="Bilangan murid lewat">
+            </div>
+          </div>
+
+          <!-- 2. Suasana Pagi -->
+          <div class="section-title">2. SUASANA PAGI / PERHIMPUNAN</div>
+          <div class="form-group">
+            <label>Perhimpunan:</label>
+            <div class="radio-group">
+              <label><input type="radio" name="perhimpunan" value="Ada" checked> Ada</label>
+              <label><input type="radio" name="perhimpunan" value="Tiada"> Tiada</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Ringkasan Pengisian Perhimpunan</label>
+            <textarea id="ringkasanPerhimpunan" rows="2" placeholder="Catatan ucapan / pengumuman"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Suasana Umum (tenang/terganggu dll)</label>
+            <input type="text" id="suasanaUmum" placeholder="Cth: Terkawal dan tenang">
+          </div>
+
+          <!-- 3. Pengurusan Kelas -->
+          <div class="section-title">3. PENGURUSAN KELAS / PdP</div>
+          <div class="form-group">
+            <label>Guru masuk kelas mengikut jadual?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="ikutJadual" value="Ya" checked> Ya</label>
+              <label><input type="radio" name="ikutJadual" value="Tidak"> Tidak</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Kelas tanpa guru (jika ada)</label>
+            <input type="text" id="kelasTanpaGuru" placeholder="Nyatakan nama kelas">
+          </div>
+          <div class="form-group">
+            <label>Pemantauan PdP / Program Akademik</label>
+            <input type="text" id="pemantauanPdp" placeholder="Catatan pemantauan">
+          </div>
+
+          <!-- 4. Disiplin -->
+          <div class="section-title">4. DISIPLIN & SAHSIAH MURID</div>
+          <div class="form-group">
+            <label>Kes Disiplin (jika ada)</label>
+            <input type="text" id="kesDisiplin" placeholder="Jenis kes (lewat, kekemasan dll)">
+          </div>
+          <div class="form-group">
+            <label>Tindakan yang telah diambil</label>
+            <input type="text" id="tindakanDisiplin" placeholder="Tindakan nasihat / disiplin">
+          </div>
+
+          <!-- 5. Fasiliti & Kebersihan -->
+          <div class="section-title">5. FASILITI & KEBERSIHAN</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Keadaan tandas:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="keadaanTandas" value="Baik" checked> Baik</label>
+                <label><input type="radio" name="keadaanTandas" value="Kurang memuaskan"> Kurang memuaskan</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Keadaan kelas:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="keadaanKelas" value="Baik" checked> Baik</label>
+                <label><input type="radio" name="keadaanKelas" value="Kurang memuaskan"> Kurang memuaskan</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Isu kemudahan rosak (jika ada)</label>
+            <input type="text" id="kemudahanRosak" placeholder="Lampu rosak, paip air dll">
+          </div>
+
+          <!-- 6. Catatan Tambahan -->
+          <div class="section-title">6. CATATAN TAMBAHAN / PERKARA PENTING</div>
+          <div class="form-group">
+            <textarea id="catatanTambahan" rows="3" placeholder="Sebarang catatan penting pentadbir..."></textarea>
+          </div>
+
+          <!-- 7. Lampiran Gambar (Maksimum 4 Gambar dengan Pemampatan Pantas) -->
+          <div class="section-title">7. LAMPIRAN GAMBAR PEMANTAUAN (MAKSIMUM 4 GAMBAR)</div>
+          <div style="background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <div>
+                <label style="font-weight:700; margin-bottom:2px;">Muat Naik Gambar Aktiviti / Kawasan Sekolah</label>
+                <p style="font-size:11px; color:#64748b;">Maksimum 4 keping. Gambar <strong>dimampatkan secara automatik</strong> sebelum dihantar supaya pantas dan menjimatkan data.</p>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="file" id="inputGambar" accept="image/*" multiple style="display:none;" onchange="handlePilihGambar(event)">
+                <button type="button" onclick="document.getElementById('inputGambar').click()" class="btn btn-secondary btn-sm" id="btnPilihGambar">
+                  📷 Pilih / Tambah Gambar
+                </button>
+                <button type="button" onclick="padamSemuaGambar()" class="btn btn-secondary btn-sm" id="btnPadamSemuaGambar" style="color:var(--danger); display:none;">
+                  Padam Semua
+                </button>
+              </div>
+            </div>
+
+            <!-- Preview Grid Kad Gambar -->
+            <div id="previewGambarGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:10px; margin-top:12px;"></div>
+            <div id="txtKapasitiGambar" style="font-size:11px; color:#64748b; margin-top:8px;">0 daripada 4 gambar dipilih.</div>
+          </div>
+
+          <!-- Scribble Tandatangan Pengisi -->
+          <div class="sig-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:12px; font-weight:700;">Tandatangan Pentadbir Bertugas: <strong id="lblPengisiSig" style="color:var(--primary);"></strong></span>
+              <button type="button" onclick="clearSig('canvasPengisi')" style="font-size:11px; color:var(--danger); background:none; border:none; cursor:pointer; text-decoration:underline;">Padam Semula</button>
+            </div>
+            <canvas id="canvasPengisi" width="360" height="130" class="signature-pad"></canvas>
+            <div style="font-size:10px; color:#64748b; margin-top:4px;">* Imej tandatangan dimampatkan secara automatik.</div>
+          </div>
+
+          <!-- Butang Simpan / Kemaskini -->
+          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+            <button type="button" onclick="setSemulaBorang()" class="btn btn-secondary">Batal / Set Semula</button>
+            <button type="submit" id="btnHantar" class="btn btn-primary">
+              <span id="btnHantarText">Simpan Laporan ke Google Sheet</span>
+            </button>
+          </div>
         </form>
       </div>
-
-      <!-- Paparan Kunci (Jika Murid Sudah Buka Jubin) -->
-      <div id="alreadyOpenedCard" class="hidden max-w-md mx-auto text-center py-6">
-        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
-          <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <h3 class="text-lg font-black text-slate-800 mb-1">Tugas Anda Telah Selesai!</h3>
-        <p class="text-xs text-slate-600 mb-4" id="alreadyOpenedMsg">
-          Anda telah pun membuka salah satu jubin sebelum ini. Setiap murid hanya dibenarkan membuka jubin sekali sahaja.
-        </p>
-        <button onclick="logoutStudent()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-5 py-2.5 rounded-xl transition">
-          Log Keluar
-        </button>
-      </div>
-
-      <!-- Paparan Kuiz Aktif -->
-      <div id="quizContainer" class="hidden">
-        <div class="flex flex-wrap justify-between items-center border-b pb-3 mb-5 gap-2 bg-slate-50 p-3 rounded-xl">
-          <div>
-            <div class="text-[10px] text-slate-400 uppercase font-bold">Murid:</div>
-            <h3 class="text-base font-black text-slate-800" id="currentStudentName">-</h3>
-          </div>
-          <button onclick="logoutStudent()" class="text-xs bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded-lg font-bold">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
-          </button>
-        </div>
-
-        <!-- Soalan-soalan Kuiz -->
-        <div id="quizFormWrapper">
-          <div class="mb-4 text-xs bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-xl flex items-center gap-2">
-            <i class="fa-solid fa-circle-exclamation text-base shrink-0"></i>
-            <span><strong>Syarat:</strong> Anda wajib mendapat skor penuh <strong>15 / 15 betul</strong> untuk membuka mana-mana jubin. Jika belum lulus penuh, anda boleh mengulanginya semula.</span>
-          </div>
-
-          <form id="activeQuizForm" onsubmit="submitQuizAnswers(event)" class="space-y-4">
-            <div id="questionsList" class="space-y-4">
-              <!-- 15 Soalan RBT Tingkatan 3 Dijana Melalui JS -->
-            </div>
-
-            <div class="pt-4 border-t flex justify-end">
-              <button type="submit" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-8 rounded-xl shadow transition text-xs flex items-center justify-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i> HANTAR &amp; SEMAK KEPUTUSAN
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Kad Keputusan & Pemilihan Jubin -->
-        <div id="quizResultModal" class="hidden text-center py-6">
-          <div id="resultIcon" class="text-5xl mb-2"></div>
-          <h4 id="resultTitle" class="text-xl font-black mb-1"></h4>
-          <p id="resultDesc" class="text-slate-600 max-w-lg mx-auto mb-4 text-xs leading-relaxed"></p>
-
-          <!-- Bahagian Pemilihan Jubin Jika Lulus 15/15 -->
-          <div id="tileSelectionArea" class="hidden max-w-md mx-auto bg-sky-50 border border-sky-200 p-4 rounded-2xl mb-4">
-            <h5 class="text-xs font-black text-sky-950 uppercase mb-1">Pilih 1 Jubin Yang Ingin Anda Buka:</h5>
-            <p class="text-[11px] text-sky-700 mb-3">Klik mana-mana nombor jubin di bawah (1 - 12) yang masih berwarna biru:</p>
-            <div id="tilesChoiceGrid" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              <!-- Butang 1-12 dijana oleh JS -->
-            </div>
-          </div>
-
-          <div class="flex flex-wrap justify-center gap-2">
-            <button id="retryBtn" onclick="startNewSession()" class="bg-sky-700 hover:bg-sky-800 text-white font-bold py-2.5 px-5 rounded-xl text-xs shadow flex items-center gap-2">
-              <i class="fa-solid fa-rotate-right"></i> Cuba Semula Sesi Kuiz
-            </button>
-          </div>
-        </div>
-
-      </div>
-
     </section>
-  </main>
 
-  <!-- MODAL TEKA GAMBAR KESELURUHAN -->
-  <div id="guessModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl">
-      <div class="flex justify-between items-center mb-3">
-        <h3 class="font-black text-base text-slate-800 flex items-center gap-2">
-          <i class="fa-solid fa-trophy text-amber-500"></i> Teka Gambar Misteri
-        </h3>
-        <button onclick="closeGuessModal()" class="text-slate-400 hover:text-slate-600 p-1">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-      <p class="text-xs text-slate-600 mb-3.5">
-        Tuliskan tekaan bagi keseluruhan imej objek atau aksi yang tersembunyi.
-      </p>
-      <form onsubmit="handleSendGuess(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">Nama Anda</label>
-          <select id="guessStudentSelect" required class="w-full border rounded-xl p-2 text-xs bg-slate-50">
-            <option value="">-- Pilih Nama Anda --</option>
+    <!-- ================= TAB 2: DASHBOARD ================= -->
+    <section id="tab-dashboard" class="hidden">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; border-bottom:1px solid #e2e8f0; padding-bottom:12px;">
+          <div>
+            <h2 style="font-size:17px; font-weight:800;">Dashboard Pemantauan Harian</h2>
+            <p style="font-size:12px; color:#64748b;">Senarai rekod, status pengesahan & masa kemaskini terkini</p>
+          </div>
+          <button onclick="fetchData(true)" class="btn btn-secondary btn-sm">🔄 Muat Semula Data</button>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+          <input type="text" id="cariTxt" oninput="filterLaporan()" placeholder="Cari nama pentadbir / tarikh..." style="flex:1; min-width:180px;">
+          <select id="filterStatus" onchange="filterLaporan()" style="width:180px;">
+            <option value="Semua">Semua Status</option>
+            <option value="Menunggu Pengesahan">Menunggu Pengesahan</option>
+            <option value="Telah Disahkan">Telah Disahkan</option>
           </select>
         </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">Jawapan Tekaan</label>
-          <input type="text" id="guessInput" placeholder="Tulis tekaan keseluruhan gambar di sini" required class="w-full border rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-amber-500" />
-        </div>
-        <button type="submit" id="btnSubmitGuess" class="w-full bg-amber-500 hover:bg-amber-600 text-sky-950 font-black py-2.5 rounded-xl text-xs shadow">
-          <i class="fa-solid fa-paper-plane"></i> Hantar Tekaan
-        </button>
-      </form>
-    </div>
-  </div>
 
-  <!-- MODAL PANEL GURU (ADMIN) -->
-  <div id="adminModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3 md:p-5 z-50">
-    <div class="bg-white rounded-2xl max-w-3xl w-full p-4 md:p-6 shadow-2xl max-h-[94vh] flex flex-col">
-      <div class="flex justify-between items-center mb-3 border-b pb-2">
-        <h3 class="font-black text-base text-sky-950 flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-amber-500"></i> Panel Kawalan Guru RBT
-        </h3>
-        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 p-1">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Tarikh & Hari</th>
+                <th>Pentadbir Bertugas</th>
+                <th>Kehadiran</th>
+                <th>Masa Kemaskini</th>
+                <th>Status</th>
+                <th style="text-align:center;">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="listLaporanBody">
+              <tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">Memuatkan data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: CETAKAN LAPORAN (MENGIKUT BULAN) ================= -->
+    <section id="tab-cetakan" class="hidden">
+      
+      <!-- Panel Pilihan Bulan (No-Print) -->
+      <div class="card no-print" style="border-left:4px solid var(--primary);">
+        <h3 style="font-size:15px; font-weight:800; margin-bottom:6px;">Pilih Bulan Laporan</h3>
+        <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Hanya laporan bagi bulan yang dipilih akan disenaraikan. Klik mana-mana kad untuk membuka format cetakan rasmi.</p>
+        
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <label style="font-size:13px; font-weight:700;">Bulan:</label>
+          <select id="selectBulanCetakan" onchange="renderSenaraiLaporanBulan()" style="max-width:220px; font-weight:600;">
+          </select>
+          <span id="jumlahLaporanBulan" style="font-size:12px; color:#475569; font-weight:600;"></span>
+        </div>
+
+        <!-- Senarai Laporan Dalam Bulan Berkenaan -->
+        <div id="senaraiKadLaporanBulan" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:10px; margin-top:14px;">
+        </div>
       </div>
 
-      <!-- Log Masuk Admin -->
-      <div id="adminLoginSection" class="my-auto py-8 max-w-sm mx-auto text-center w-full">
-        <h4 class="font-bold text-slate-800 text-sm mb-1">Pengesahan Guru</h4>
-        <p class="text-xs text-slate-500 mb-3">Masukkan kata laluan admin:</p>
-        <div class="flex gap-2">
-          <input type="password" id="adminPassInput" placeholder="Kata laluan" class="border rounded-xl p-2 text-xs flex-1 bg-slate-50" />
-          <button onclick="verifyAdmin()" class="bg-sky-900 text-white px-4 py-2 rounded-xl text-xs font-bold">
-            Masuk
-          </button>
-        </div>
-        <p id="adminError" class="text-rose-500 text-xs mt-2 hidden font-bold">Kata laluan tidak tepat!</p>
+      <!-- Toolbar Cetak -->
+      <div id="toolbarCetak" class="no-print hidden" style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 16px; border-radius:8px; border:1px solid #cbd5e1;">
+        <span style="font-size:12px; font-weight:600;">Laporan Sedang Dipaparkan</span>
+        <button onclick="window.print()" class="btn btn-success btn-sm">🖨️ Cetak / Simpan PDF</button>
       </div>
 
-      <!-- Dashboard Admin -->
-      <div id="adminDashboard" class="hidden flex-1 overflow-y-auto space-y-4 pr-1">
+      <!-- Kertas Cetakan Format Rasmi (Hanya muncul bila laporan dipilih) -->
+      <div id="printContainer" class="hidden">
+        <div class="print-sheet">
+          <!-- Kepala Dokumen Cetakan -->
+          <div style="display:flex; align-items:center; justify-content:center; gap:14px; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:12px;">
+            <img src="logo.png" alt="Logo" style="height:65px;" onerror="this.classList.add('hidden')">
+            <div style="text-align:center;">
+              <h2 style="font-size:16px; font-weight:900; text-transform:uppercase;">SMK KAMARUL ARIFFIN LABIS JOHOR</h2>
+              <h3 style="font-size:14px; font-weight:800; text-decoration:underline;">BORANG PEMANTAUAN PENTADBIR BERTUGAS 2026</h3>
+              <p style="font-size:11px; margin-top:2px;" id="pKemaskiniInfo"></p>
+            </div>
+          </div>
 
-        <!-- Pratonton Peta 12 Jubin -->
-        <div class="bg-slate-900 text-white p-3.5 rounded-xl border border-slate-800">
-          <h4 class="text-xs font-black text-amber-400 mb-2">PETA KEDUDUKAN 12 JUBIN (3 &times; 4)</h4>
-          <div class="max-w-xs mx-auto">
-            <div class="relative w-full aspect-[3/4] rounded-xl overflow-hidden border-2 border-amber-400 bg-slate-950">
-              <img id="adminPreviewImg" src="gambar2.png" alt="Gambar Sebenar" class="absolute inset-0 w-full h-full object-cover select-none z-10" />
-              <div id="adminPreviewBoard" class="absolute inset-0 grid grid-cols-3 grid-rows-4 gap-1 p-1 z-20"></div>
+          <!-- Butiran Asas -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; border-bottom:1px solid #000; padding-bottom:8px; margin-bottom:12px; font-size:12px;">
+            <div><strong>Tarikh:</strong> <span id="pTarikh">-</span></div>
+            <div><strong>Hari:</strong> <span id="pHari">-</span></div>
+            <div><strong>Pentadbir Bertugas:</strong> <span id="pPentadbir" style="font-weight:700;">-</span></div>
+            <div><strong>Masa:</strong> <span id="pMasa">-</span></div>
+          </div>
+
+          <!-- 1. Kehadiran -->
+          <div style="margin-bottom:10px;">
+            <div style="font-weight:700; text-decoration:underline;">1. KEHADIRAN</div>
+            <div style="padding-left:14px; font-size:12px;">
+              <p>- Kehadiran Guru: <span id="pKehadiranGuru">-</span></p>
+              <p>- Kehadiran Murid: <span id="pKehadiranMurid">-</span></p>
+              <p>- Guru Lewat Hadir (jika ada): <span id="pGuruLewat">-</span></p>
+              <p>- Murid Lewat Hadir (anggaran): <span id="pMuridLewat">-</span></p>
+            </div>
+          </div>
+
+          <!-- 2. Suasana Pagi -->
+          <div style="margin-bottom:10px;">
+            <div style="font-weight:700; text-decoration:underline;">2. SUASANA PAGI / PERHIMPUNAN</div>
+            <div style="padding-left:14px; font-size:12px;">
+              <p>- Perhimpunan: <span id="pPerhimpunan">-</span></p>
+              <p>- Ringkasan Pengisian: <span id="pRingkasanPerhimpunan" style="font-style:italic;">-</span></p>
+              <p>- Suasana Umum: <span id="pSuasanaUmum">-</span></p>
+            </div>
+          </div>
+
+          <!-- 3. Pengurusan Kelas -->
+          <div style="margin-bottom:10px;">
+            <div style="font-weight:700; text-decoration:underline;">3. PENGURUSAN KELAS / PdP</div>
+            <div style="padding-left:14px; font-size:12px;">
+              <p>- Guru masuk kelas mengikut jadual? <span id="pIkutJadual">-</span></p>
+              <p>- Kelas tanpa guru: <span id="pKelasTanpaGuru">-</span></p>
+              <p>- Pemantauan PdP / Program Akademik: <span id="pPemantauanPdp">-</span></p>
+            </div>
+          </div>
+
+          <!-- 4. Disiplin -->
+          <div style="margin-bottom:10px;">
+            <div style="font-weight:700; text-decoration:underline;">4. DISIPLIN & SAHSIAH MURID</div>
+            <div style="padding-left:14px; font-size:12px;">
+              <p>- Kes Disiplin: <span id="pKesDisiplin">-</span></p>
+              <p>- Tindakan yang telah diambil: <span id="pTindakanDisiplin">-</span></p>
+            </div>
+          </div>
+
+          <!-- 5. Fasiliti & Kebersihan -->
+          <div style="margin-bottom:10px;">
+            <div style="font-weight:700; text-decoration:underline;">5. FASILITI & KEBERSIHAN</div>
+            <div style="padding-left:14px; font-size:12px;">
+              <p>- Keadaan tandas: <span id="pKeadaanTandas">-</span></p>
+              <p>- Keadaan kelas: <span id="pKeadaanKelas">-</span></p>
+              <p>- Isu kemudahan rosak: <span id="pKemudahanRosak">-</span></p>
+            </div>
+          </div>
+
+          <!-- 6. Catatan Tambahan -->
+          <div style="margin-bottom:12px;">
+            <div style="font-weight:700; text-decoration:underline;">6. CATATAN TAMBAHAN / PERKARA PENTING</div>
+            <div id="pCatatanTambahan" style="padding:6px 14px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:4px; font-size:12px; margin-top:4px;">-</div>
+          </div>
+
+          <!-- 7. Lampiran Gambar Pemantauan (Cetakan) -->
+          <div id="pSectionGambar" class="hidden" style="margin-bottom:14px;">
+            <div style="font-weight:700; text-decoration:underline; font-size:12px; margin-bottom:6px;">7. LAMPIRAN GAMBAR AKTIVITI / PEMANTAUAN</div>
+            <div id="pGridGambar" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;">
+            </div>
+          </div>
+
+          <!-- Tandatangan Cetakan -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; border-top:1px solid #000; padding-top:12px; margin-top:14px;">
+            <div>
+              <p style="font-size:11px; font-weight:700;">DISEDIAKAN OLEH (PENTADBIR BERTUGAS):</p>
+              <div style="height:80px; width:160px; border:1px dashed #cbd5e1; display:flex; align-items:center; justify-content:center; background:#fafafa; margin:6px 0;">
+                <img id="imgTtdPengisi" style="max-height:75px; max-width:100%;" class="hidden" alt="Tandatangan Pengisi">
+                <span id="noTtdPengisi" style="font-size:10px; color:#94a3b8; font-style:italic;">Tiada Tandatangan</span>
+              </div>
+              <p style="font-size:11px;">Nama: <strong id="pNamaPengisiBawah">-</strong></p>
+            </div>
+
+            <div>
+              <p style="font-size:11px; font-weight:700;">DISEMAK OLEH: PENGETUA</p>
+              <div style="height:80px; width:160px; border:1px dashed #cbd5e1; display:flex; align-items:center; justify-content:center; background:#fafafa; margin:6px 0;">
+                <img id="imgTtdPengesah" style="max-height:75px; max-width:100%;" class="hidden" alt="Tandatangan Pengetua">
+                <span id="noTtdPengesah" style="font-size:10px; color:#e11d48; font-style:italic;">Belum Disahkan</span>
+              </div>
+              <p style="font-size:11px;">Nama: <span id="pNamaPengesah">................................................</span></p>
+              <p style="font-size:11px;">Tarikh: <span id="pTarikhPengesah">................................................</span></p>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Rekod Murid Menjawab Kuiz -->
-        <div class="border rounded-xl p-3 bg-slate-50">
-          <div class="flex justify-between items-center mb-1.5">
-            <h4 class="text-xs font-black text-slate-700 uppercase flex items-center gap-1.5">
-              <i class="fa-solid fa-list-check text-sky-600"></i> Rekod Murid Menjawab Kuiz
-            </h4>
-            <button onclick="fetchAdminQuizRecords()" class="text-xs text-sky-600 font-bold hover:underline">
-              <i class="fa-solid fa-arrows-rotate"></i> Muat Semula
-            </button>
-          </div>
-          <div class="overflow-x-auto border rounded-xl max-h-48 bg-white">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100 border-b text-slate-700 font-bold sticky top-0">
-                <tr>
-                  <th class="p-2">Masa</th>
-                  <th class="p-2">Nama Murid</th>
-                  <th class="p-2 text-center">Skor</th>
-                  <th class="p-2 text-center">Keputusan</th>
-                </tr>
-              </thead>
-              <tbody id="quizRecordsTableBody">
-                <tr><td colspan="4" class="p-3 text-center text-slate-400">Memuatkan data...</td></tr>
-              </tbody>
-            </table>
-          </div>
+  </main>
+
+  <!-- Modal Scribble Sahkan Pengetua -->
+  <div id="modalSahkan" class="modal-overlay">
+    <div class="modal">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:8px; margin-bottom:12px;">
+        <h3 style="font-size:14px; font-weight:800;">Pengesahan Pengetua</h3>
+        <button onclick="tutupModalSahkan()" style="background:none; border:none; font-size:18px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Nama Pengesah</label>
+        <input type="text" id="namaPengesahInput" value="PENGETUA">
+      </div>
+      <div class="form-group">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label>Tandatangan Pengetua</label>
+          <button type="button" onclick="clearSig('canvasPengesah')" style="font-size:11px; color:var(--danger); background:none; border:none; text-decoration:underline;">Padam</button>
         </div>
-
-        <!-- Rekod Tekaan Gambar -->
-        <div class="border rounded-xl p-3 bg-slate-50">
-          <div class="flex justify-between items-center mb-1.5">
-            <h4 class="text-xs font-black text-slate-700 uppercase flex items-center gap-1.5">
-              <i class="fa-solid fa-lightbulb text-amber-500"></i> Rekod Tekaan Gambar
-            </h4>
-            <button onclick="fetchAdminGuesses()" class="text-xs text-sky-600 font-bold hover:underline">
-              <i class="fa-solid fa-arrows-rotate"></i> Muat Semula
-            </button>
-          </div>
-          <div class="overflow-x-auto border rounded-xl max-h-40 bg-white">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100 border-b text-slate-700 font-bold sticky top-0">
-                <tr>
-                  <th class="p-2">Masa</th>
-                  <th class="p-2">Nama Murid</th>
-                  <th class="p-2">Tekaan</th>
-                </tr>
-              </thead>
-              <tbody id="guessesTableBody">
-                <tr><td colspan="3" class="p-3 text-center text-slate-400">Memuatkan data...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Muat Naik Gambar Baharu ke Google Drive -->
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 space-y-2">
-          <h5 class="text-xs font-black text-amber-950 uppercase flex items-center gap-1.5">
-            <i class="fa-solid fa-cloud-arrow-up text-amber-600"></i> Muat Naik Gambar Misteri Baharu (Drive)
-          </h5>
-          <p class="text-[11px] text-amber-800">Pilih gambar dari komputer/telefon untuk dimuat naik terus ke Google Drive:</p>
-          <label class="inline-block bg-amber-500 hover:bg-amber-600 text-sky-950 font-black text-xs px-3.5 py-2 rounded-lg cursor-pointer shadow">
-            <i class="fa-solid fa-image"></i> Pilih Gambar Baharu
-            <input type="file" id="adminImgUploader" accept="image/*" class="hidden" onchange="handleAdminFileSelected(event)">
-          </label>
-          <div id="uploadStatusText" class="text-xs min-h-[1.2rem]"></div>
-        </div>
-
-        <!-- Reset Keseluruhan -->
-        <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5 flex justify-between items-center">
-          <div>
-            <h5 class="text-xs font-black text-rose-800 uppercase">Set Semula Kuiz (Reset All)</h5>
-            <p class="text-[11px] text-rose-700">Tutup semula kesemua 12 jubin, kosongkan rekod aktiviti dan status murid.</p>
-          </div>
-          <button onclick="handleResetAllQuiz()" id="btnResetQuiz" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2 px-3.5 rounded-lg shadow">
-            RESET SEMUA
-          </button>
-        </div>
-
+        <canvas id="canvasPengesah" width="340" height="120" class="signature-pad" style="width:100%;"></canvas>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:14px;">
+        <button onclick="tutupModalSahkan()" class="btn btn-secondary btn-sm">Batal</button>
+        <button onclick="hantarPengesahan()" id="btnSimpanPengesahan" class="btn btn-success btn-sm">Sahkan & Simpan</button>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t py-3 text-center text-xs text-slate-500">
-    Web App Pembelajaran RBT Tingkatan 3 &bull; 12 Jubin Misteri
+  <footer>
+    SMK Kamarul Ariffin, Labis, Johor &bull; Sistem Pemantauan Pentadbir Bertugas 2026
   </footer>
 
+  <!-- JAVASCRIPT LOGIK & INTEGRASI -->
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5gngSwcMN1o3AjAyJntG5vlIz2wxkz7pPUX4NtjtaJB0Pz3aJhTA0xnDMFJ9YwBT1/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzBeeW9KU-WdXIhdduPxnDkNgsg8frXvB2iIv_vpNh61M3QPfGStpQRAe4iy3HQ34dz/exec";
 
-    // Senarai 49 Murid Kelas 3S1 dan 3S2
-    let STUDENTS_DATA = [
-      // KELAS 3S1 (26 Murid)
-      { nama: "ADAM HAFIY BIN ROHAIZAD", noIc: "111016010759", ic: "111016010759", sudahBuka: false },
-      { nama: "AHMAD IRFAN DANIEL BIN AHMAD FAZRIN", noIc: "111105010857", ic: "111105010857", sudahBuka: false },
-      { nama: "CHIU YIT JEN", noIc: "110812010851", ic: "110812010851", sudahBuka: false },
-      { nama: "CHUO YI TIAN", noIc: "110505010894", ic: "110505010894", sudahBuka: false },
-      { nama: "CLEMENT CALEB A/L CHRISTOPHER", noIc: "110408011481", ic: "110408011481", sudahBuka: false },
-      { nama: "DHIYA THAHIRA BINTI MOHD NORIZAN", noIc: "111015010618", ic: "111015010618", sudahBuka: false },
-      { nama: "HII HE MEI", noIc: "110216011102", ic: "110216011102", sudahBuka: false },
-      { nama: "HONG ZI YI", noIc: "110321011550", ic: "110321011550", sudahBuka: false },
-      { nama: "MIA SARI BINTI MOHD ZAMRY", noIc: "111223010188", ic: "111223010188", sudahBuka: false },
-      { nama: "MUHAMMAD AMMAR ISLAH BIN HUSARMAN", noIc: "110413011769", ic: "110413011769", sudahBuka: false },
-      { nama: "MUHAMMAD AQIL BIN MUHAMAD AZWAN", noIc: "110928010677", ic: "110928010677", sudahBuka: false },
-      { nama: "MUHAMMAD DANIAL BIN MAZLAN", noIc: "111011020261", ic: "111011020261", sudahBuka: false },
-      { nama: "MUHAMMAD FAZREE BIN MOHD YUNUS", noIc: "111006011475", ic: "111006011475", sudahBuka: false },
-      { nama: "MUHAMMAD RIFQY BIN HEDLY", noIc: "110817010527", ic: "110817010527", sudahBuka: false },
-      { nama: "MUHAMMAD SYAHMI BIN NOR EMEY", noIc: "110717010503", ic: "110717010503", sudahBuka: false },
-      { nama: "MUHAMMAD ZULFAHMI HELMI BIN MOHD HUZAIRIE", noIc: "110505011109", ic: "110505011109", sudahBuka: false },
-      { nama: "NAUFAL NAZHAN BIN NOR HAFIZ", noIc: "110214011125", ic: "110214011125", sudahBuka: false },
-      { nama: "NUR AIN QALESYA BINTI RUZAHIRUDIN", noIc: "120101110396", ic: "120101110396", sudahBuka: false },
-      { nama: "NUR AZIETUL BEEVI BINTI ABDULLAH", noIc: "110405011574", ic: "110405011574", sudahBuka: false },
-      { nama: "NUR HANIS QAISARA BINTI NAZRUL IZWAN", noIc: "110128080618", ic: "110128080618", sudahBuka: false },
-      { nama: "NUR ZAHIDAH HUSNA BINTI MOHD HAIDHIR", noIc: "110409010472", ic: "110409010472", sudahBuka: false },
-      { nama: "NURANI INSYIRAH BINTI RAZALI", noIc: "110628011010", ic: "110628011010", sudahBuka: false },
-      { nama: "NURHAFISAH BINTI ABDUL KARIM", noIc: "111224010892", ic: "111224010892", sudahBuka: false },
-      { nama: "POORANI A/P K NARAYANAN", noIc: "110221010980", ic: "110221010980", sudahBuka: false },
-      { nama: "RAM JAGANNATH A/L SURESH", noIc: "111113011083", ic: "111113011083", sudahBuka: false },
-      { nama: "SOH FEI XUAN", noIc: "111005010358", ic: "111005010358", sudahBuka: false },
-
-      // KELAS 3S2 (23 Murid)
-      { nama: "ADRIAN", noIc: "111207060759", ic: "111207060759", sudahBuka: false },
-      { nama: "AMMAR QALISH BIN KHAIRUL ANUAR", noIc: "111217010405", ic: "111217010405", sudahBuka: false },
-      { nama: "FOM YU TONG", noIc: "111116011660", ic: "111116011660", sudahBuka: false },
-      { nama: "HAIQAL IRWAN BIN MOHAMAD AKMAL", noIc: "111127011199", ic: "111127011199", sudahBuka: false },
-      { nama: "KHOO JUN HONG", noIc: "110523010089", ic: "110523010089", sudahBuka: false },
-      { nama: "MIA NUR ASHEFFA BINTI MOHAMAD AZMI", noIc: "110409010894", ic: "110409010894", sudahBuka: false },
-      { nama: "MOHAMAD HARITH HAIKAL BIN ABDULLAH", noIc: "110223012007", ic: "110223012007", sudahBuka: false },
-      { nama: "MUHAMAD PUTRA MOKHTAR BUKHARY AL DIN BIN ZAINUDDIN", noIc: "110812140947", ic: "110812140947", sudahBuka: false },
-      { nama: "MUHAMMAD FAREDZS ISKANDAR BIN REDZUAN", noIc: "110409010747", ic: "110409010747", sudahBuka: false },
-      { nama: "MUHAMMAD FARISH BIN MOHD FAZELLY", noIc: "110119011581", ic: "110119011581", sudahBuka: false },
-      { nama: "MUHAMMAD RAIF BIN ABDUL RAHMAN", noIc: "110623011177", ic: "110623011177", sudahBuka: false },
-      { nama: "MUHAMMAD SYAMIL ESHAN BIN MUHAMAD RAHMAT", noIc: "110904011077", ic: "110904011077", sudahBuka: false },
-      { nama: "NITISHKUMAR A/L MURGA", noIc: "111029011435", ic: "111029011435", sudahBuka: false },
-      { nama: "NUR DANIA ELIESYA BINTI ROSLI", noIc: "110417011424", ic: "110417011424", sudahBuka: false },
-      { nama: "NUR HAIRA", noIc: "111224010622", ic: "111224010622", sudahBuka: false },
-      { nama: "NUR SYASYA NABILAH BINTI SHAHDAN", noIc: "110817010826", ic: "110817010826", sudahBuka: false },
-      { nama: "NURATIKA ADILA BINTI AZHAR", noIc: "110408010286", ic: "110408010286", sudahBuka: false },
-      { nama: "NURHASHA UMAIRAH BINTI NORHASHIMI", noIc: "111012140580", ic: "111012140580", sudahBuka: false },
-      { nama: "NURUL ATIKAH BINTI MINHED", noIc: "110201010932", ic: "110201010932", sudahBuka: false },
-      { nama: "SITI DAMIA SHOLIHAH BINTI DARHAM", noIc: "111228010822", ic: "111228010822", sudahBuka: false },
-      { nama: "TAN ZE HONG", noIc: "110825011247", ic: "110825011247", sudahBuka: false },
-      { nama: "UMMU QALSOM BINTI ROHIZAD", noIc: "110512050376", ic: "110512050376", sudahBuka: false },
-      { nama: "YOW SING ONN", noIc: "110914011441", ic: "110914011441", sudahBuka: false }
+    // Jadual Pentadbir 2026
+    const JADUAL_PENTADBIR_2026 = [
+      { minggu: 1, label: "12.1.2026 - 16.1.2026", start: "2026-01-12", end: "2026-01-16", guru: "Cikgu Masnon b. Amat" },
+      { minggu: 2, label: "19.1.2026 - 23.1.2026", start: "2026-01-19", end: "2026-01-23", guru: "Cikgu Shamsinah bt. Shamsudin" },
+      { minggu: 3, label: "26.1.2026 - 30.1.2026", start: "2026-01-26", end: "2026-01-30", guru: "Cikgu Zainal b. Mohd Zabir" },
+      { minggu: 4, label: "2.2.2026 - 6.2.2026", start: "2026-02-02", end: "2026-02-06", guru: "Cikgu Rohana bt. Jasmin" },
+      { minggu: 5, label: "9.2.2026 - 13.2.2026", start: "2026-02-09", end: "2026-02-13", guru: "Cikgu Mohd Riduwan b. Mohd Yassan" },
+      { minggu: 6, label: "23.2.2026 - 27.2.2026", start: "2026-02-23", end: "2026-02-27", guru: "Cikgu Mohamaad Fadzeli b. Azam" },
+      { minggu: 7, label: "2.3.2026 - 6.3.2026", start: "2026-03-02", end: "2026-03-06", guru: "Cikgu Mohd Nizam b. Subani" },
+      { minggu: 8, label: "9.3.2026 - 13.3.2026", start: "2026-03-09", end: "2026-03-13", guru: "Cikgu Masnon b. Amat" },
+      { minggu: 9, label: "16.3.2026 - 20.3.2026", start: "2026-03-16", end: "2026-03-20", guru: "Cikgu Shamsinah bt Shamsudin" },
+      { minggu: 10, label: "30.3.2026 - 3.4.2026", start: "2026-03-30", end: "2026-04-03", guru: "Cikgu Zainal b. Mohd Zabir" },
+      { minggu: 11, label: "6.4.2026 - 10.4.2026", start: "2026-04-06", end: "2026-04-10", guru: "Cikgu Rohana bt Jasmin" },
+      { minggu: 12, label: "13.4.2026 - 17.4.2026", start: "2026-04-13", end: "2026-04-17", guru: "Cikgu Mohd Riduwan b. Mohd Yassan" },
+      { minggu: 13, label: "20.4.2026 - 24.4.2026", start: "2026-04-20", end: "2026-04-24", guru: "Cikgu Mohamaad Fadzeli b. Azam" },
+      { minggu: 14, label: "27.4.2026 - 1.5.2026", start: "2026-04-27", end: "2026-05-01", guru: "Cikgu Mohd Nizam b. Subani" },
+      { minggu: 15, label: "4.5.2026 - 8.5.2026", start: "2026-05-04", end: "2026-05-08", guru: "Cikgu Masnon b. Amat" },
+      { minggu: 16, label: "11.5.2026 - 15.5.2026", start: "2026-05-11", end: "2026-05-15", guru: "Cikgu Oskasmazila binti Osman (PK HEM)" },
+      { minggu: 17, label: "18.5.2026 - 22.5.2026", start: "2026-05-18", end: "2026-05-22", guru: "Cikgu Zainal b. Mohd Zabir" },
+      { minggu: 18, label: "8.6.2026 - 12.6.2026", start: "2026-06-08", end: "2026-06-12", guru: "Cikgu Rohana bt. Jasmin" },
+      { minggu: 19, label: "15.6.2026 - 19.6.2026", start: "2026-06-15", end: "2026-06-19", guru: "Cikgu Mohd Riduwan b. Mohd Yassan" },
+      { minggu: 20, label: "22.6.2026 - 26.6.2026", start: "2026-06-22", end: "2026-06-26", guru: "Cikgu Mohamaad Fadzeli b. Azam" },
+      { minggu: 21, label: "29.6.2026 - 3.7.2026", start: "2026-06-29", end: "2026-07-03", guru: "Cikgu Mohd Nizam b. Subani" },
+      { minggu: 22, label: "6.7.2026 - 10.7.2026", start: "2026-07-06", end: "2026-07-10", guru: "Cikgu Masnon b. Amat" },
+      { minggu: 23, label: "13.7.2026 - 17.7.2026", start: "2026-07-13", end: "2026-07-17", guru: "Cikgu Oskasmazila binti Osman (PK HEM)" },
+      { minggu: 24, label: "20.7.2026 - 24.7.2026", start: "2026-07-20", end: "2026-07-24", guru: "Cikgu Zainal b. Mohd Zabir" },
+      { minggu: 25, label: "27.7.2026 - 31.7.2026", start: "2026-07-27", end: "2026-07-31", guru: "Cikgu Rohana bt. Jasmin" },
+      { minggu: 26, label: "3.8.2026 - 7.8.2026", start: "2026-08-03", end: "2026-08-07", guru: "Cikgu Mohd Riduwan b. Mohd Yassan" },
+      { minggu: 27, label: "10.8.2026 - 14.8.2026", start: "2026-08-10", end: "2026-08-14", guru: "Cikgu Mohamaad Fadzeli b. Azam" },
+      { minggu: 28, label: "17.8.2026 - 21.8.2026", start: "2026-08-17", end: "2026-08-21", guru: "Cikgu Mohd Nizam b. Subani" },
+      { minggu: 29, label: "24.8.2026 - 28.8.2026", start: "2026-08-24", end: "2026-08-28", guru: "Cikgu Masnon b. Amat" },
+      { minggu: 30, label: "7.9.2026 - 11.9.2026", start: "2026-09-07", end: "2026-09-11", guru: "Cikgu Oskasmazila binti Osman (PK HEM)" },
+      { minggu: 31, label: "14.9.2026 - 18.9.2026", start: "2026-09-14", end: "2026-09-18", guru: "Cikgu Zainal b. Mohd Zabir" },
+      { minggu: 32, label: "21.9.2026 - 25.9.2026", start: "2026-09-21", end: "2026-09-25", guru: "Cikgu Rohana bt. Jasmin" },
+      { minggu: 33, label: "28.9.2026 - 2.10.2026", start: "2026-09-28", end: "2026-10-02", guru: "Cikgu Mohd Riduwan b. Mohd Yassan" },
+      { minggu: 34, label: "5.10.2026 - 9.10.2026", start: "2026-10-05", end: "2026-10-09", guru: "Cikgu Mohamaad Fadzeli b. Azam" },
+      { minggu: 35, label: "12.10.2026 - 16.10.2026", start: "2026-10-12", end: "2026-10-16", guru: "Cikgu Mohd Nizam b. Subani" },
+      { minggu: 36, label: "19.10.2026 - 23.10.2026", start: "2026-10-19", end: "2026-10-23", guru: "Cikgu Masnon b. Amat" },
+      { minggu: 37, label: "26.10.2026 - 30.10.2026", start: "2026-10-26", end: "2026-10-30", guru: "Cikgu Oskasmazila binti Osman (PK HEM)" },
+      { minggu: 38, label: "2.11.2026 - 6.11.2026", start: "2026-11-02", end: "2026-11-06", guru: "Cikgu Zainal b. Mohd Zabir" },
+      { minggu: 39, label: "9.11.2026 - 13.11.2026", start: "2026-11-09", end: "2026-11-13", guru: "Cikgu Rohana bt. Jasmin" },
+      { minggu: 40, label: "16.11.2026 - 20.11.2026", start: "2026-11-16", end: "2026-11-20", guru: "Cikgu Mohd Riduwan b. Mohd Yassan" },
+      { minggu: 41, label: "23.11.2026 - 27.11.2026", start: "2026-11-23", end: "2026-11-27", guru: "Cikgu Mohamaad Fadzeli b. Azam" },
+      { minggu: 42, label: "30.11.2026 - 4.12.2026", start: "2026-11-30", end: "2026-12-04", guru: "Cikgu Mohd Nizam b. Subani" }
     ];
 
-    // Bank 15 Soalan Objektif RBT Tingkatan 3
-    const QUESTION_BANK = [
-      { id: 1, q: "Apakah maksud reka bentuk mekatronik?", options: ["Aplikasi elektronik dan mekanikal bersama kawalan komputer untuk mereka bentuk produk pintar", "Reka bentuk pembungkusan dan pemasaran produk semata-mata", "Penyediaan lukisan teknikal secara manual di atas kertas", "Proses mereka bentuk fabrik pakaian mengikut trend fesyen"], answer: "A" },
-      { id: 2, q: "Antara berikut, yang manakah merupakan gabungan elemen utama dalam sistem mekatronik?", options: ["Sistem mekanikal, sistem elektrik, sistem elektronik dan sistem kawalan", "Sistem graviti, sistem hidraulik, reka bentuk fesyen dan akuaponik", "Prinsip inventif, analisis fungsi, carta Gantt dan lakaran 3D", "Media cetak, media elektronik, media sosial dan saluran agihan"], answer: "A" },
-      { id: 3, q: "Komponen manakah yang berfungsi mengesan perubahan parameter persekitaran seperti haba, cahaya atau pergerakan?", options: ["Penderia (Sensor)", "Geganti (Relay)", "Takal dan tali sawat", "Motor DC"], answer: "A" },
-      { id: 4, q: "Apakah peranan mikropengawal (microcontroller) dalam sesebuah produk mekatronik?", options: ["Memproses isyarat input dan menghasilkan isyarat kawalan output mengikut atur cara", "Membekalkan tenaga elektrik berterusan kepada komponen kuasa tinggi", "Mengurangkan atau meningkatkan kelajuan mekanikal roda", "Mengelakkan litar elektrik daripada mengalami litar pintas"], answer: "A" },
-      { id: 5, q: "Antara produk berikut, yang manakah merupakan aplikasi sistem mekatronik yang lengkap?", options: ["Kereta kawalan jauh, mesin basuh automatik dan pintu gelangsar automatik", "Basikal lajak, lampu suluh mentol dan seterika arang", "Meja belajar kayu, kerusi plastik dan rak kasut keluli", "Cangkul kebun, pasu siraman sendiri dan pisau dapur"], answer: "A" },
-      { id: 6, q: "Antara peranti berikut, yang manakah bertindak sebagai peranti output dalam litar elektronik mekatronik?", options: ["Diod pemancar cahaya (LED) dan pembaz (buzzer)", "Penderia inframerah (IR sensor)", "Penderia ultrasonik (Ultrasonic sensor)", "Suis punat tekan mikro (Push button)"], answer: "A" },
-      { id: 7, q: "Arahan atur cara teks yang dimuat naik ke dalam mikropengawal biasanya dibangunkan melalui perisian seperti:", options: ["Arduino IDE", "Adobe Photoshop", "Microsoft Excel", "VLC Media Player"], answer: "A" },
-      { id: 8, q: "Apakah tujuan utama menyediakan borang kajian keperluan pelanggan pada peringkat awal pembangunan produk?", options: ["Mengenal pasti kehendak, masalah dan keperluan sebenar pengguna", "Menentukan kadar cukai perniagaan kepada pihak berkuasa", "Mengira keuntungan jualan tahunan di pasaran borong", "Memilih warna cat pembungkusan yang paling murah"], answer: "A" },
-      { id: 9, q: "Proses perbincangan awal antara pengurus projek dengan pelanggan bagi menterjemahkan idea reka bentuk dinamakan:", options: ["Projek brief", "Kajian inventori", "Penilaian ergonomik", "Pemasaran bersemuka"], answer: "A" },
-      { id: 10, q: "Model yang dibina menyerupai produk sebenar dari segi rupa bentuk, saiz serta bahan dan berupaya berfungsi sepenuhnya dikenali sebagai:", options: ["Model berfungsi sepenuhnya (Prototype)", "Mock-up skala separuh", "Lakaran piktorial 2D", "Model blok tanah liat"], answer: "A" },
-      { id: 11, q: "Dalam kaedah SMART untuk pengurusan perancangan projek, huruf 'M' merujuk kepada:", options: ["Measurable (Boleh diukur)", "Marketable (Boleh dipasarkan)", "Mechanical (Berasaskan mekanikal)", "Maintenance (Penyelenggaraan)"], answer: "A" },
-      { id: 12, q: "Kaedah pengiklanan yang memaparkan kelebihan fizikal serta cara penggunaan sebenar produk bagi menarik minat pembeli dikenali sebagai:", options: ["Kenyataan merangsang dan demonstrasi", "Tiruan produk import", "Sorotan harga tersembunyi", "Lelongan awam barang rosak"], answer: "A" },
-      { id: 13, q: "Antara media berikut, yang manakah tergolong dalam kategori media pengiklanan digital / elektronik?", options: ["Media sosial, emel dan laman sesawang", "Risalah bercetak (Brochure)", "Kain rentang fizikal (Banner)", "Katalog bercetak yang dipos"], answer: "A" },
-      { id: 14, q: "Apakah peranan utama reka bentuk pembungkusan selain melindungi produk daripada kerosakan fizikal?", options: ["Menarik perhatian pengguna dan menyampaikan maklumat lengkap produk", "Menjadikan berat bungkusan produk bertambah drastik", "Menyembunyikan tarikh luput bahan kandungan", "Mengelakkan produk daripada dijual di premis perniagaan"], answer: "A" },
-      { id: 15, q: "Nama, simbol, istilah atau identiti visual tersendiri yang digunakan untuk membezakan produk pengeluar daripada pesaing disebut:", options: ["Penjenamaan (Brand identity)", "Penentuan harga modal", "Ujian parameter kualiti", "Invensi teknologi asas"], answer: "A" }
-    ];
+    let cachedLaporan = [];
+    let currentSelectedId = null;
+    let existingLaporanForDate = null;
+    let uploadedImages = []; // Menyimpan gambar yang dimampatkan (maks 4)
 
-    let openedTilesSet = new Set();
-    let currentStudent = null;
-    let lastLoadedImageUrl = "";
+    // ================= PAD CONTENG (CANVAS TANDATANGAN) =================
+    function setupCanvas(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext("2d");
+      let drawing = false;
 
-    document.addEventListener("DOMContentLoaded", () => {
-      buildPuzzleGrid();
-      populateDropdowns();
-      refreshDataFromServer();
-      setInterval(() => { refreshDataFromServer(false); }, 6000);
-    });
-
-    // Menjana 12 Jubin (3 Kolum x 4 Baris)
-    function buildPuzzleGrid() {
-      const board = document.getElementById("puzzleBoard");
-      board.innerHTML = "";
-      for (let i = 1; i <= 12; i++) {
-        const tile = document.createElement("div");
-        tile.className = "tile ease-fluid";
-        tile.id = `tile-${i}`;
-        tile.innerHTML = `<span>${i}</span><span class="tile-sub">Jubin ${i}</span>`;
-        board.appendChild(tile);
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
       }
+
+      function start(e) {
+        drawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "#000000";
+        if (e.cancelable) e.preventDefault();
+      }
+
+      function move(e) {
+        if (!drawing) return;
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        if (e.cancelable) e.preventDefault();
+      }
+
+      function end() { drawing = false; }
+
+      canvas.addEventListener("mousedown", start);
+      canvas.addEventListener("mousemove", move);
+      window.addEventListener("mouseup", end);
+
+      canvas.addEventListener("touchstart", start, { passive: false });
+      canvas.addEventListener("touchmove", move, { passive: false });
+      window.addEventListener("touchend", end);
     }
 
-    function populateDropdowns() {
-      const select = document.getElementById("studentSelect");
-      const guessSelect = document.getElementById("guessStudentSelect");
-      const curL = select.value;
-      const curG = guessSelect.value;
+    function clearSig(id) {
+      const c = document.getElementById(id);
+      c.getContext("2d").clearRect(0, 0, c.width, c.height);
+    }
 
-      select.innerHTML = '<option value="">-- Sila Pilih Nama Anda (3S1 / 3S2) --</option>';
-      guessSelect.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
+    function isCanvasBlank(canvasId) {
+      const c = document.getElementById(canvasId);
+      const ctx = c.getContext("2d");
+      const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, c.width, c.height).data.buffer);
+      return !pixelBuffer.some(color => color !== 0);
+    }
 
-      STUDENTS_DATA.forEach(s => {
-        const opt = document.createElement("option");
-        opt.value = s.nama;
-        opt.textContent = `${s.nama} ${s.sudahBuka ? '(Sudah Buka Jubin)' : ''}`;
-        select.appendChild(opt);
+    function compressSignature(canvasId) {
+      const orig = document.getElementById(canvasId);
+      const temp = document.createElement("canvas");
+      temp.width = 300;
+      temp.height = 100;
+      const ctx = temp.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, temp.width, temp.height);
+      ctx.drawImage(orig, 0, 0, temp.width, temp.height);
+      return temp.toDataURL("image/jpeg", 0.6);
+    }
 
-        const opt2 = document.createElement("option");
-        opt2.value = s.nama;
-        opt2.textContent = s.nama;
-        guessSelect.appendChild(opt2);
+    // ================= FUNGSI PEMAMPATAN GAMBAR (CANVAS AUTO-RESIZE) =================
+    function compressImageFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const MAX_WIDTH = 500;
+            const MAX_HEIGHT = 500;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height = Math.round((height * MAX_WIDTH) / width);
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width = Math.round((width * MAX_HEIGHT) / height);
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Mampatkan ke JPEG 0.55 (~15-25KB sahaja)
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.55);
+            resolve(dataUrl);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
       });
-
-      if (curL) select.value = curL;
-      if (curG) guessSelect.value = curG;
     }
 
-    // Paparkan senarai jubin yang telah dibuka di hadapan portal
-    function renderFrontUnlockedList(tilesDetail) {
-      const container = document.getElementById("unlockedTilesListContainer");
-      const progressBadge = document.getElementById("tilesProgressBadge");
-      if (!container) return;
+    async function handlePilihGambar(event) {
+      const files = Array.from(event.target.files);
+      if (!files || files.length === 0) return;
+
+      const bakiSlot = 4 - uploadedImages.length;
+      if (bakiSlot <= 0) {
+        alert("Maksimum 4 keping gambar sahaja dibenarkan.");
+        event.target.value = "";
+        return;
+      }
+
+      const filesToProcess = files.slice(0, bakiSlot);
+      if (files.length > bakiSlot) {
+        alert(`Hanya ${bakiSlot} gambar pertama diproses kerana had maksimum adalah 4 gambar.`);
+      }
+
+      for (const file of filesToProcess) {
+        try {
+          const compressedDataUrl = await compressImageFile(file);
+          uploadedImages.push(compressedDataUrl);
+        } catch (err) {
+          console.error("Gagal memampatkan gambar:", err);
+        }
+      }
+
+      event.target.value = "";
+      renderPreviewGambar();
+    }
+
+    function renderPreviewGambar() {
+      const container = document.getElementById("previewGambarGrid");
+      const txtKapasiti = document.getElementById("txtKapasitiGambar");
+      const btnPadamSemua = document.getElementById("btnPadamSemuaGambar");
+      const btnPilih = document.getElementById("btnPilihGambar");
 
       container.innerHTML = "";
-      let openedCount = 0;
+      txtKapasiti.innerText = `${uploadedImages.length} daripada 4 gambar dipilih.`;
 
-      for (let i = 1; i <= 12; i++) {
-        const tInfo = (tilesDetail && tilesDetail.find(t => t.noJubin === i)) || {
-          noJubin: i,
-          opened: openedTilesSet.has(i),
-          dibukaOleh: ""
-        };
+      btnPadamSemua.style.display = uploadedImages.length > 0 ? "inline-flex" : "none";
+      if (uploadedImages.length >= 4) {
+        btnPilih.disabled = true;
+        btnPilih.style.opacity = "0.5";
+      } else {
+        btnPilih.disabled = false;
+        btnPilih.style.opacity = "1";
+      }
 
-        if (tInfo.opened) openedCount++;
-
+      uploadedImages.forEach((imgData, idx) => {
+        const approxKb = Math.round((imgData.length * 3 / 4) / 1024);
         const card = document.createElement("div");
-        card.className = `p-2.5 rounded-xl border flex items-center gap-2.5 transition ease-fluid ${
-          tInfo.opened
-            ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-sm'
-            : 'bg-slate-50/60 border-slate-200 text-slate-400'
-        }`;
-
+        card.style.cssText = "position:relative; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,0.05);";
         card.innerHTML = `
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs shrink-0 ${
-            tInfo.opened ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-200 text-slate-500'
-          }">
-            ${i}
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="text-[9px] font-extrabold uppercase tracking-wider ${tInfo.opened ? 'text-emerald-700' : 'text-slate-400'}">
-              JUBIN ${i}
-            </div>
-            <div class="text-xs font-black truncate leading-tight ${tInfo.opened ? 'text-slate-800' : 'text-slate-400 italic'}">
-              ${tInfo.opened ? (tInfo.dibukaOleh || 'Murid RBT') : 'Belum Dibuka'}
-            </div>
-          </div>
-          <div class="shrink-0 text-sm pr-1">
-            ${tInfo.opened 
-              ? '<i class="fa-solid fa-lock-open text-emerald-600" title="Terbuka"></i>' 
-              : '<i class="fa-solid fa-lock text-slate-300" title="Terkunci"></i>'}
+          <img src="${imgData}" style="width:100%; height:90px; object-fit:cover; display:block;" alt="Gambar ${idx + 1}">
+          <div style="padding:4px 6px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border-top:1px solid #e2e8f0;">
+            <span style="font-size:10px; font-weight:700; color:#475569;">Gbr ${idx + 1} (~${approxKb}KB)</span>
+            <button type="button" onclick="buangSatuGambar(${idx})" style="background:none; border:none; color:var(--danger); font-size:14px; font-weight:bold; cursor:pointer;" title="Padam">&times;</button>
           </div>
         `;
         container.appendChild(card);
-      }
-
-      if (progressBadge) {
-        progressBadge.textContent = `${openedCount} / 12 Jubin Terbuka`;
-        if (openedCount === 12) {
-          progressBadge.className = "text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 animate-pulse";
-        } else {
-          progressBadge.className = "text-[11px] font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800";
-        }
-      }
-    }
-
-    async function refreshDataFromServer(showSpin = true) {
-      const syncIcon = document.getElementById("syncIcon");
-      if (showSpin && syncIcon) syncIcon.classList.add("fa-spin");
-
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=getTiles&_t=${Date.now()}`);
-        const data = await res.json();
-        if (data.success) {
-          if (data.imageUrl) {
-            let activeUrl = data.imageUrl;
-            if (activeUrl === "gambar2.png") activeUrl += "?v=" + (data.imageVersion || Date.now());
-            if (lastLoadedImageUrl !== activeUrl) {
-              lastLoadedImageUrl = activeUrl;
-              document.getElementById("mainPuzzleImage").src = activeUrl;
-              document.getElementById("adminPreviewImg").src = activeUrl;
-            }
-          }
-
-          if (data.students && data.students.length > 0) {
-            STUDENTS_DATA = data.students;
-            populateDropdowns();
-          }
-
-          if (data.openedTiles) {
-            openedTilesSet.clear();
-            for (let i = 1; i <= 12; i++) {
-              const el = document.getElementById(`tile-${i}`);
-              if (el) el.classList.remove("unlocked");
-            }
-            data.openedTiles.forEach(num => {
-              openedTilesSet.add(Number(num));
-              const el = document.getElementById(`tile-${num}`);
-              if (el) el.classList.add("unlocked");
-            });
-
-            // Kemas kini senarai hadapan portal & panel guru
-            renderFrontUnlockedList(data.tilesDetail);
-            if (!document.getElementById("adminDashboard").classList.contains("hidden")) {
-              renderAdminPreviewGrid();
-            }
-          }
-        }
-      } catch (err) {
-        console.warn("Segerak ralat:", err);
-      } finally {
-        if (showSpin && syncIcon) syncIcon.classList.remove("fa-spin");
-      }
-    }
-
-    // Pengendali Log Masuk Murid
-    function handleStudentLogin(e) {
-      e.preventDefault();
-      const nama = document.getElementById("studentSelect").value;
-      const icEntered = document.getElementById("icInput").value.trim().replace(/[-\s]/g, "");
-
-      const found = STUDENTS_DATA.find(s => s.nama === nama);
-      if (!found) {
-        alert("Sila pilih nama murid.");
-        return;
-      }
-
-      const rawIC = found.noIc || found.ic || "";
-      const stIC = String(rawIC).trim().replace(/[-\s]/g, "");
-
-      if (!stIC || stIC !== icEntered) {
-        alert("Kata laluan (No. Kad Pengenalan) tidak padan! Sila pastikan anda memasukkan angka tanpa tanda sempang (-).");
-        return;
-      }
-
-      currentStudent = found;
-
-      if (found.sudahBuka) {
-        document.getElementById("loginCard").classList.add("hidden");
-        document.getElementById("alreadyOpenedCard").classList.remove("hidden");
-        document.getElementById("alreadyOpenedMsg").textContent = `Anda (${found.nama}) telah pun membuka salah satu jubin sebelum ini. Setiap murid hanya dibenarkan membuka sekali sahaja.`;
-        return;
-      }
-
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("quizContainer").classList.remove("hidden");
-      document.getElementById("currentStudentName").textContent = currentStudent.nama;
-      startNewSession();
-    }
-
-    function logoutStudent() {
-      currentStudent = null;
-      document.getElementById("loginCard").classList.remove("hidden");
-      document.getElementById("quizContainer").classList.add("hidden");
-      document.getElementById("alreadyOpenedCard").classList.add("hidden");
-      document.getElementById("icInput").value = "";
-    }
-
-    function startNewSession() {
-      document.getElementById("quizResultModal").classList.add("hidden");
-      document.getElementById("quizFormWrapper").classList.remove("hidden");
-
-      const container = document.getElementById("questionsList");
-      container.innerHTML = "";
-
-      QUESTION_BANK.forEach((item, idx) => {
-        const qCard = document.createElement("div");
-        qCard.className = "p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2";
-        qCard.innerHTML = `
-          <div class="font-bold text-slate-800 text-xs md:text-sm flex items-start gap-2">
-            <span class="bg-sky-700 text-white text-[10px] px-2 py-0.5 rounded shrink-0">Soalan ${idx + 1}</span>
-            <span>${item.q}</span>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
-            ${item.options.map((opt, oIdx) => {
-              const letter = ["A", "B", "C", "D"][oIdx];
-              return `
-                <label class="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-sky-50 transition">
-                  <input type="radio" name="q_${idx}" value="${letter}" required class="text-sky-600">
-                  <span class="text-slate-700"><strong>${letter}.</strong>${opt}</span>
-                </label>
-              `;
-            }).join("")}
-          </div>
-        `;
-        container.appendChild(qCard);
       });
-      document.getElementById("quizSection").scrollIntoView({ behavior: "smooth" });
     }
 
-    async function submitQuizAnswers(e) {
-      e.preventDefault();
-      let score = 0;
-      QUESTION_BANK.forEach((item, idx) => {
-        const sel = document.querySelector(`input[name="q_${idx}"]:checked`);
-        if (sel && sel.value === item.answer) score++;
-      });
+    function buangSatuGambar(index) {
+      uploadedImages.splice(index, 1);
+      renderPreviewGambar();
+    }
 
-      // Rerekodkan percubaan murid terus ke Google Sheet Admin
-      try {
-        fetch(`${SCRIPT_URL}?action=recordQuiz&nama=${encodeURIComponent(currentStudent.nama)}&skor=${score}&_t=${Date.now()}`);
-      } catch (err) {
-        console.warn("Gagal merekod:", err);
+    function padamSemuaGambar() {
+      if (confirm("Adakah anda pasti untuk memadam semua gambar yang telah dipilih?")) {
+        uploadedImages = [];
+        renderPreviewGambar();
       }
+    }
 
-      document.getElementById("quizFormWrapper").classList.add("hidden");
-      const modal = document.getElementById("quizResultModal");
-      modal.classList.remove("hidden");
+    // ================= MOD PENTADBIR BERTUGAS (AUTO VS MANUAL) =================
+    function toggleModPentadbir() {
+      const mod = document.querySelector('input[name="modPentadbir"]:checked').value;
+      const boxAuto = document.getElementById("boxPentadbirAuto");
+      const boxManual = document.getElementById("boxPentadbirManual");
 
-      const icon = document.getElementById("resultIcon");
-      const title = document.getElementById("resultTitle");
-      const desc = document.getElementById("resultDesc");
-      const tileArea = document.getElementById("tileSelectionArea");
-      const retryBtn = document.getElementById("retryBtn");
-
-      if (score === 15) {
-        icon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500"></i>`;
-        title.innerHTML = `<span class="text-emerald-600">SEMPURNA! 15 / 15 BETUL!</span>`;
-        desc.innerHTML = `Tahniah <strong>${currentStudent.nama}</strong>! Anda berjaya menjawab kesemua soalan RBT dengan tepat. Sila pilih <strong>satu jubin (1 - 12)</strong> di bawah untuk dibuka:`;
-        tileArea.classList.remove("hidden");
-        retryBtn.classList.add("hidden");
-        renderTileChoiceButtons();
+      if (mod === "manual") {
+        boxAuto.classList.add("hidden");
+        boxManual.classList.remove("hidden");
+        kemaskiniPentadbirManual();
       } else {
-        icon.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500"></i>`;
-        title.innerHTML = `<span class="text-rose-600">Skor Anda: ${score} / 15</span>`;
-        desc.innerHTML = `Anda perlu mendapat skor penuh <strong>15/15</strong> untuk membuka jubin. Sila cuba lagi!`;
-        tileArea.classList.add("hidden");
-        retryBtn.classList.remove("hidden");
+        boxAuto.classList.remove("hidden");
+        boxManual.classList.add("hidden");
+        onTarikhChange(); // Kembalikan ke jadual automatik
       }
     }
 
-    function renderTileChoiceButtons() {
-      const grid = document.getElementById("tilesChoiceGrid");
-      grid.innerHTML = "";
+    function kemaskiniPentadbirManual() {
+      const nama = document.getElementById("namaPentadbirManual").value.trim();
+      const jawatan = document.getElementById("jawatanPentadbirManual").value.trim();
+      let gabung = nama;
+      if (jawatan) {
+        gabung += ` (${jawatan})`;
+      }
+      if (!gabung) gabung = "Pentadbir Bertugas (Manual)";
 
-      for (let t = 1; t <= 12; t++) {
-        const isOpened = openedTilesSet.has(t);
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = `py-2.5 px-2 rounded-xl font-black text-xs flex flex-col items-center justify-center transition ${
-          isOpened 
-            ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed' 
-            : 'bg-sky-600 hover:bg-sky-700 text-white shadow-md active:scale-95'
-        }`;
-        btn.innerHTML = `
-          <span>Jubin ${t}</span>
-          <span class="text-[9px] font-normal">${isOpened ? 'Telah Dibuka' : 'Klik Buka'}</span>
-        `;
-        if (isOpened) {
-          btn.disabled = true;
-        } else {
-          btn.onclick = () => confirmAndOpenTile(t);
+      document.getElementById("pentadbir").value = gabung;
+      document.getElementById("lblPengisiSig").innerText = nama || gabung;
+      document.getElementById("txtNamaGuruTop").innerText = gabung;
+      document.getElementById("badgeMinggu").innerText = "MANUAL / PENGGANTI";
+    }
+
+    // ================= TUKAR TAB =================
+    function switchTab(t) {
+      ['pengisian', 'dashboard', 'cetakan'].forEach(tab => {
+        document.getElementById(`tab-${tab}`).classList.add('hidden');
+        document.getElementById(`btn-tab-${tab}`).classList.remove('active');
+      });
+      document.getElementById(`tab-${t}`).classList.remove('hidden');
+      document.getElementById(`btn-tab-${t}`).classList.add('active');
+
+      if (t === 'dashboard') renderDashboardTable(cachedLaporan);
+      if (t === 'cetakan') inisialisasiTabCetakan();
+    }
+
+    // ================= JADUAL PENTADBIR DROPDOWN =================
+    function initMingguDropdown() {
+      const sel = document.getElementById("selectMingguJadual");
+      sel.innerHTML = JADUAL_PENTADBIR_2026.map(item => 
+        `<option value="${item.minggu}">Minggu ${item.minggu}: ${item.label} (${item.guru})</option>`
+      ).join('');
+    }
+
+    function setMingguInfo(item) {
+      document.getElementById("badgeMinggu").innerText = `MINGGU ${item.minggu}`;
+      document.getElementById("labelTarikhMinggu").innerText = `(${item.label})`;
+      document.getElementById("txtNamaGuruTop").innerText = item.guru;
+      document.getElementById("pentadbir").value = `${item.guru} [Minggu ${item.minggu}]`;
+      document.getElementById("lblPengisiSig").innerText = item.guru;
+      document.getElementById("selectMingguJadual").value = item.minggu;
+    }
+
+    function onTarikhChange() {
+      const tVal = document.getElementById("tarikh").value;
+      if (!tVal) return;
+
+      const d = new Date(tVal + "T00:00:00");
+      const days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+      document.getElementById("hari").value = days[d.getDay()];
+
+      const mod = document.querySelector('input[name="modPentadbir"]:checked')?.value || "auto";
+      if (mod === "auto") {
+        let match = JADUAL_PENTADBIR_2026.find(j => tVal >= j.start && tVal <= j.end);
+        if (!match) {
+          match = JADUAL_PENTADBIR_2026.slice().reverse().find(j => tVal >= j.start) || JADUAL_PENTADBIR_2026[0];
         }
-        grid.appendChild(btn);
+        setMingguInfo(match);
+      } else {
+        kemaskiniPentadbirManual();
+      }
+
+      semakLaporanTarikh(tVal);
+    }
+
+    function onManualMingguChange() {
+      const mod = document.querySelector('input[name="modPentadbir"]:checked')?.value || "auto";
+      if (mod === "manual") {
+        document.querySelector('input[name="modPentadbir"][value="auto"]').checked = true;
+        toggleModPentadbir();
+      }
+      const m = parseInt(document.getElementById("selectMingguJadual").value);
+      const match = JADUAL_PENTADBIR_2026.find(j => j.minggu === m);
+      if (match) setMingguInfo(match);
+    }
+
+    function semakLaporanTarikh(tarikhStr) {
+      const alertBox = document.getElementById("alertLaporanWujud");
+      existingLaporanForDate = cachedLaporan.find(r => r["Tarikh"] === tarikhStr);
+
+      if (existingLaporanForDate) {
+        const masaKini = existingLaporanForDate["Masa Kemaskini"] || existingLaporanForDate["Timestamp"] || "-";
+        document.getElementById("alertLaporanDesc").innerHTML = 
+          `Laporan tarikh <strong>${tarikhStr}</strong> telah diisi oleh <strong>${existingLaporanForDate["Pentadbir Bertugas"]}</strong>.<br>Masa rekod terakhir: <strong>${masaKini}</strong>.`;
+        alertBox.style.display = "flex";
+      } else {
+        alertBox.style.display = "none";
+        document.getElementById("btnHantarText").innerText = "Simpan Laporan ke Google Sheet";
+        document.getElementById("infoKemaskiniTerakhir").style.display = "none";
+        document.getElementById("reportId").value = "";
       }
     }
 
-    async function confirmAndOpenTile(tileNum) {
-      const confirmAction = confirm(`Adakah anda pasti mahu membuka JUBIN ${tileNum}?\n\nPeringatan: Anda hanya boleh membuka jubin SEKALI sahaja dan tidak boleh menjawab kuiz lagi selepas ini.`);
-      if (!confirmAction) return;
+    function tutupAlert() {
+      document.getElementById("alertLaporanWujud").style.display = "none";
+    }
 
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=chooseTile&nama=${encodeURIComponent(currentStudent.nama)}&noJubin=${tileNum}&_t=${Date.now()}`);
-        const result = await res.json();
-        if (result.success) {
-          alert(result.message);
-          openedTilesSet.add(tileNum);
-          const el = document.getElementById(`tile-${tileNum}`);
-          if (el) el.classList.add("unlocked");
-          currentStudent.sudahBuka = true;
-          logoutStudent();
-          refreshDataFromServer();
-          document.getElementById("puzzleSection").scrollIntoView({ behavior: "smooth" });
+    // ================= MUAT DATA SEDIA ADA =================
+    function muatDataLaporanSediaAda() {
+      if (!existingLaporanForDate) return;
+      const item = existingLaporanForDate;
+
+      document.getElementById("reportId").value = item["ID"] || "";
+      document.getElementById("existingCreatedTimeVal").value = item["Timestamp"] || "";
+      document.getElementById("statusPengesahanVal").value = item["Status Pengesahan"] || "Menunggu Pengesahan";
+
+      // Pengesanan Mod Pentadbir (Auto vs Manual)
+      const pVal = item["Pentadbir Bertugas"] || "";
+      if (pVal.includes("[Minggu")) {
+        document.querySelector('input[name="modPentadbir"][value="auto"]').checked = true;
+        toggleModPentadbir();
+      } else {
+        document.querySelector('input[name="modPentadbir"][value="manual"]').checked = true;
+        toggleModPentadbir();
+        const matchJawatan = pVal.match(/^(.*?)\s*\((.*?)\)$/);
+        if (matchJawatan) {
+          document.getElementById("namaPentadbirManual").value = matchJawatan[1].trim();
+          document.getElementById("jawatanPentadbirManual").value = matchJawatan[2].trim();
         } else {
-          alert("Gagal: " + result.message);
+          document.getElementById("namaPentadbirManual").value = pVal;
+          document.getElementById("jawatanPentadbirManual").value = "";
+        }
+      }
+      document.getElementById("pentadbir").value = pVal;
+      document.getElementById("lblPengisiSig").innerText = pVal;
+
+      document.getElementById("masa").value = item["Masa"] || "";
+      document.getElementById("kehadiranGuru").value = item["Kehadiran Guru"] || "";
+      document.getElementById("kehadiranMurid").value = item["Kehadiran Murid"] || "";
+      document.getElementById("guruLewat").value = item["Guru Lewat"] || "";
+      document.getElementById("muridLewat").value = item["Murid Lewat"] || "";
+
+      setRadioVal("perhimpunan", item["Perhimpunan"] || "Ada");
+      document.getElementById("ringkasanPerhimpunan").value = item["Ringkasan Perhimpunan"] || "";
+      document.getElementById("suasanaUmum").value = item["Suasana Umum"] || "";
+
+      setRadioVal("ikutJadual", item["Guru Ikut Jadual"] || "Ya");
+      document.getElementById("kelasTanpaGuru").value = item["Kelas Tanpa Guru"] || "";
+      document.getElementById("pemantauanPdp").value = item["Pemantauan PdP"] || "";
+
+      document.getElementById("kesDisiplin").value = item["Kes Disiplin"] || "";
+      document.getElementById("tindakanDisiplin").value = item["Tindakan Disiplin"] || "";
+
+      setRadioVal("keadaanTandas", item["Keadaan Tandas"] || "Baik");
+      setRadioVal("keadaanKelas", item["Keadaan Kelas"] || "Baik");
+      document.getElementById("kemudahanRosak").value = item["Isu Kemudahan Rosak"] || "";
+      document.getElementById("catatanTambahan").value = item["Catatan Tambahan"] || "";
+
+      // Muatkan Gambar Lampiran
+      uploadedImages = [];
+      if (item["Gambar 1"]) uploadedImages.push(item["Gambar 1"]);
+      if (item["Gambar 2"]) uploadedImages.push(item["Gambar 2"]);
+      if (item["Gambar 3"]) uploadedImages.push(item["Gambar 3"]);
+      if (item["Gambar 4"]) uploadedImages.push(item["Gambar 4"]);
+      renderPreviewGambar();
+
+      const kemaskini = item["Masa Kemaskini"] || item["Timestamp"] || "-";
+      document.getElementById("txtKemaskiniTerakhir").innerText = kemaskini;
+      document.getElementById("infoKemaskiniTerakhir").style.display = "block";
+
+      document.getElementById("btnHantarText").innerText = "Kemaskini Laporan (Elak Bertindih)";
+      tutupAlert();
+      alert("Data laporan sedia ada telah dimuatkan. Sila semak, kemaskini dan turunkan tandatangan untuk menyimpan semula.");
+    }
+
+    function setRadioVal(name, val) {
+      const el = document.querySelector(`input[name="${name}"][value="${val}"]`);
+      if (el) el.checked = true;
+    }
+
+    function setSemulaBorang() {
+      document.getElementById("formLaporan").reset();
+      clearSig("canvasPengisi");
+      uploadedImages = [];
+      renderPreviewGambar();
+      document.getElementById("reportId").value = "";
+      document.getElementById("infoKemaskiniTerakhir").style.display = "none";
+      document.getElementById("btnHantarText").innerText = "Simpan Laporan ke Google Sheet";
+      tutupAlert();
+
+      document.querySelector('input[name="modPentadbir"][value="auto"]').checked = true;
+      toggleModPentadbir();
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById("tarikh").value = today;
+      onTarikhChange();
+    }
+
+    // ================= PENGAMBILAN DATA (API) =================
+    async function fetchData(force = false) {
+      if (cachedLaporan.length > 0 && !force) return cachedLaporan;
+      try {
+        const res = await fetch(GAS_API_URL);
+        const json = await res.json();
+        if (json.status === "success") {
+          cachedLaporan = json.data.reverse();
+          renderDashboardTable(cachedLaporan);
+          return cachedLaporan;
         }
       } catch (err) {
-        alert("Ralat semasa berhubung ke pelayan: " + err.message);
+        console.error("Gagal ambil data", err);
       }
+      return cachedLaporan;
     }
 
-    // Modal Tekaan Gambar
-    function openGuessModal() {
-      document.getElementById("guessModal").classList.remove("hidden");
-      if (currentStudent) {
-        document.getElementById("guessStudentSelect").value = currentStudent.nama;
-      }
-    }
-    function closeGuessModal() {
-      document.getElementById("guessModal").classList.add("hidden");
-    }
-
-    async function handleSendGuess(e) {
+    // ================= SIMPAN / HANTAR BORANG =================
+    async function hantarBorang(e) {
       e.preventDefault();
-      const nama = document.getElementById("guessStudentSelect").value;
-      const tekaan = document.getElementById("guessInput").value.trim();
-      const btn = document.getElementById("btnSubmitGuess");
 
-      if (!nama || !tekaan) return;
+      if (isCanvasBlank("canvasPengisi")) {
+        alert("Sila conteng tandatangan Pentadbir Bertugas terlebih dahulu!");
+        return;
+      }
 
+      const btn = document.getElementById("btnHantar");
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menghantar...`;
+      btn.style.opacity = "0.7";
+      const oriText = document.getElementById("btnHantarText").innerText;
+      document.getElementById("btnHantarText").innerText = "Sedang Menyimpan & Memampatkan...";
 
-      try {
-        await fetch(`${SCRIPT_URL}?action=submitGuess&nama=${encodeURIComponent(nama)}&tekaan=${encodeURIComponent(tekaan)}&_t=${Date.now()}`);
-        alert(`Tahniah ${nama}! Tekaan anda "${tekaan}" telah direkodkan kepada guru.`);
-        document.getElementById("guessInput").value = "";
-        closeGuessModal();
-      } catch (err) {
-        alert("Ralat: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Hantar Tekaan`;
-      }
-    }
+      const ttdCompressed = compressSignature("canvasPengisi");
 
-    // Panel Kawalan Guru
-    function openAdminModal() {
-      document.getElementById("adminModal").classList.remove("hidden");
-    }
-    function closeAdminModal() {
-      document.getElementById("adminModal").classList.add("hidden");
-      document.getElementById("adminPassInput").value = "";
-      document.getElementById("adminError").classList.add("hidden");
-    }
-
-    function verifyAdmin() {
-      const pass = document.getElementById("adminPassInput").value.trim();
-      if (pass === "adminrbt3") {
-        document.getElementById("adminLoginSection").classList.add("hidden");
-        document.getElementById("adminDashboard").classList.remove("hidden");
-        renderAdminPreviewGrid();
-        fetchAdminQuizRecords();
-        fetchAdminGuesses();
-      } else {
-        document.getElementById("adminError").classList.remove("hidden");
-      }
-    }
-
-    function renderAdminPreviewGrid() {
-      const board = document.getElementById("adminPreviewBoard");
-      board.innerHTML = "";
-      for (let i = 1; i <= 12; i++) {
-        const isOpened = openedTilesSet.has(i);
-        const tileBox = document.createElement("div");
-        tileBox.className = "admin-tile-overlay";
-        tileBox.innerHTML = `
-          <div class="text-xs font-black text-amber-300">Jubin ${i}</div>
-          <span class="text-[8px] font-bold px-1 rounded mt-0.5 ${isOpened ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}">
-            ${isOpened ? 'TERBUKA' : 'BERTUTUP'}
-          </span>
-        `;
-        board.appendChild(tileBox);
-      }
-    }
-
-    async function fetchAdminQuizRecords() {
-      const tbody = document.getElementById("quizRecordsTableBody");
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=getQuizRecords&_t=${Date.now()}`);
-        const data = await res.json();
-        if (data.success && data.records && data.records.length > 0) {
-          tbody.innerHTML = "";
-          data.records.forEach(r => {
-            const isPass = r.skor === 15;
-            tbody.innerHTML += `
-              <tr class="border-b">
-                <td class="p-2 text-slate-500 whitespace-nowrap">${r.time}</td>
-                <td class="p-2 font-bold text-slate-800">${r.nama}</td>
-                <td class="p-2 text-center font-black ${isPass ? 'text-emerald-600' : 'text-slate-600'}">${r.skor} / 15</td>
-                <td class="p-2 text-center">
-                  <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${isPass ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
-                    ${isPass ? 'LULUS (15/15)' : 'BELUM LULUS'}
-                  </span>
-                </td>
-              </tr>
-            `;
-          });
-        } else {
-          tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-400">Tiada rekod jawapan murid lagi.</td></tr>`;
-        }
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-rose-500">Ralat memuat turun rekod.</td></tr>`;
-      }
-    }
-
-    async function fetchAdminGuesses() {
-      const tbody = document.getElementById("guessesTableBody");
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=getGuesses&_t=${Date.now()}`);
-        const data = await res.json();
-        if (data.success && data.guesses && data.guesses.length > 0) {
-          tbody.innerHTML = "";
-          data.guesses.forEach(g => {
-            tbody.innerHTML += `
-              <tr class="border-b">
-                <td class="p-2 text-slate-500 whitespace-nowrap">${g.time}</td>
-                <td class="p-2 font-bold">${g.nama}</td>
-                <td class="p-2 text-sky-700 font-semibold">${g.tekaan}</td>
-              </tr>
-            `;
-          });
-        } else {
-          tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400">Tiada rekod tekaan.</td></tr>`;
-        }
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-rose-500">Ralat memuat turun tekaan.</td></tr>`;
-      }
-    }
-
-    function handleAdminFileSelected(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const st = document.getElementById("uploadStatusText");
-      st.innerHTML = `<span class="text-amber-700 font-bold"><i class="fa-solid fa-spinner fa-spin"></i> Memuat naik ke Google Drive...</span>`;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement("canvas");
-          const MAX = 900;
-          let w = img.width, h = img.height;
-          if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } }
-          else { if (h > MAX) { w *= MAX / h; h = MAX; } }
-
-          canvas.width = w; canvas.height = h;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, w, h);
-
-          const compressed = canvas.toDataURL("image/jpeg", 0.85);
-          uploadImageToServer(compressed);
-        };
-        img.src = e.target.result;
+      const payload = {
+        action: "SAVE",
+        id: document.getElementById("reportId").value || "",
+        tarikh: document.getElementById("tarikh").value,
+        hari: document.getElementById("hari").value,
+        masa: document.getElementById("masa").value,
+        pentadbir: document.getElementById("pentadbir").value,
+        kehadiranGuru: document.getElementById("kehadiranGuru").value,
+        kehadiranMurid: document.getElementById("kehadiranMurid").value,
+        guruLewat: document.getElementById("guruLewat").value,
+        muridLewat: document.getElementById("muridLewat").value,
+        perhimpunan: document.querySelector('input[name="perhimpunan"]:checked')?.value || "Ada",
+        ringkasanPerhimpunan: document.getElementById("ringkasanPerhimpunan").value,
+        suasanaUmum: document.getElementById("suasanaUmum").value,
+        ikutJadual: document.querySelector('input[name="ikutJadual"]:checked')?.value || "Ya",
+        kelasTanpaGuru: document.getElementById("kelasTanpaGuru").value,
+        pemantauanPdp: document.getElementById("pemantauanPdp").value,
+        kesDisiplin: document.getElementById("kesDisiplin").value,
+        tindakanDisiplin: document.getElementById("tindakanDisiplin").value,
+        keadaanTandas: document.querySelector('input[name="keadaanTandas"]:checked')?.value || "Baik",
+        keadaanKelas: document.querySelector('input[name="keadaanKelas"]:checked')?.value || "Baik",
+        kemudahanRosak: document.getElementById("kemudahanRosak").value,
+        catatanTambahan: document.getElementById("catatanTambahan").value,
+        statusPengesahan: document.getElementById("statusPengesahanVal").value || "Menunggu Pengesahan",
+        ttdPengisi: ttdCompressed,
+        gambar1: uploadedImages[0] || "",
+        gambar2: uploadedImages[1] || "",
+        gambar3: uploadedImages[2] || "",
+        gambar4: uploadedImages[3] || ""
       };
-      reader.readAsDataURL(file);
-    }
 
-    async function uploadImageToServer(dataUri) {
-      const st = document.getElementById("uploadStatusText");
       try {
-        const res = await fetch(SCRIPT_URL, {
+        await fetch(GAS_API_URL, {
           method: "POST",
+          mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "uploadImage", imageData: dataUri })
+          body: JSON.stringify(payload)
         });
-        const d = await res.json();
-        if (d.success) {
-          st.innerHTML = `<span class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check"></i> ${d.message}</span>`;
-          lastLoadedImageUrl = d.imageUrl;
-          document.getElementById("mainPuzzleImage").src = d.imageUrl;
-          document.getElementById("adminPreviewImg").src = d.imageUrl;
-          refreshDataFromServer(true);
-        } else {
-          st.innerHTML = `<span class="text-rose-600 font-bold">Gagal: ${d.message}</span>`;
-        }
-      } catch (err) {
-        st.innerHTML = `<span class="text-rose-600 font-bold">Ralat: ${err.message}</span>`;
-      }
-    }
 
-    async function handleResetAllQuiz() {
-      if (!confirm("AMARAN: Adakah anda pasti mahu set semula kesemua 12 jubin dan rekod murid?")) return;
-      const btn = document.getElementById("btnResetQuiz");
-      btn.disabled = true;
-      try {
-        await fetch(`${SCRIPT_URL}?action=resetQuiz&_t=${Date.now()}`);
-        openedTilesSet.clear();
-        for (let i = 1; i <= 12; i++) {
-          const el = document.getElementById(`tile-${i}`);
-          if (el) el.classList.remove("unlocked");
-        }
-        renderAdminPreviewGrid();
-        renderFrontUnlockedList([]);
-        fetchAdminQuizRecords();
-        fetchAdminGuesses();
-        alert("Berjaya di-reset!");
+        alert("Laporan dan gambar berjaya disimpan / dikemaskini tanpa rekod bertindih!");
+        await fetchData(true);
+        setSemulaBorang();
+        switchTab("dashboard");
       } catch (err) {
-        alert("Ralat: " + err.message);
+        alert("Ralat sambungan: " + err.message);
       } finally {
         btn.disabled = false;
+        btn.style.opacity = "1";
+        document.getElementById("btnHantarText").innerText = oriText;
       }
     }
+
+    // ================= DASHBOARD RENDER =================
+    function renderDashboardTable(data) {
+      const tbody = document.getElementById("listLaporanBody");
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">Tiada rekod laporan dijumpai.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.map((item) => {
+        const isDisahkan = item["Status Pengesahan"] === "Telah Disahkan";
+        const masaKini = item["Masa Kemaskini"] || item["Timestamp"] || "-";
+        const totalGambar = [item["Gambar 1"], item["Gambar 2"], item["Gambar 3"], item["Gambar 4"]].filter(Boolean).length;
+
+        return `
+          <tr>
+            <td>
+              <strong>${item["Tarikh"] || "-"}</strong><br>
+              <small style="color:#64748b;">${item["Hari"] || ""}</small>
+              ${totalGambar > 0 ? `<br><span style="font-size:10px; background:#e0e7ff; color:#3730a3; padding:1px 5px; border-radius:4px; font-weight:700;">📷 ${totalGambar} Gambar</span>` : ''}
+            </td>
+            <td><strong>${item["Pentadbir Bertugas"] || "-"}</strong></td>
+            <td style="font-size:12px;">G: ${item["Kehadiran Guru"] || "-"}<br>M: ${item["Kehadiran Murid"] || "-"}</td>
+            <td style="font-size:11px; color:#475569;">${masaKini}</td>
+            <td>
+              <span class="badge" style="background:${isDisahkan ? '#d1fae5' : '#fef3c7'}; color:${isDisahkan ? '#065f46' : '#92400e'};">
+                ${item["Status Pengesahan"] || "Menunggu"}
+              </span>
+            </td>
+            <td style="text-align:center;">
+              <div style="display:inline-flex; gap:4px;">
+                ${!isDisahkan ? `<button onclick="bukaModalSahkan('${item["ID"]}')" class="btn btn-warning btn-sm">Sahkan</button>` : ''}
+                <button onclick="pilihDanBukaCetakan('${item["ID"]}')" class="btn btn-primary btn-sm">Cetak</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterLaporan() {
+      const q = document.getElementById("cariTxt").value.toLowerCase();
+      const status = document.getElementById("filterStatus").value;
+
+      const filtered = cachedLaporan.filter(item => {
+        const matchText = (item["Pentadbir Bertugas"] || "").toLowerCase().includes(q) ||
+                          (item["Tarikh"] || "").toLowerCase().includes(q);
+        const matchStatus = (status === "Semua") || (item["Status Pengesahan"] === status);
+        return matchText && matchStatus;
+      });
+      renderDashboardTable(filtered);
+    }
+
+    // ================= MODAL SAHKAN PENGETUA =================
+    function bukaModalSahkan(id) {
+      currentSelectedId = id;
+      clearSig("canvasPengesah");
+      document.getElementById("modalSahkan").style.display = "flex";
+    }
+
+    function tutupModalSahkan() {
+      document.getElementById("modalSahkan").style.display = "none";
+    }
+
+    async function hantarPengesahan() {
+      if (isCanvasBlank("canvasPengesah")) {
+        alert("Sila turunkan tandatangan Pengetua terlebih dahulu!");
+        return;
+      }
+
+      const btn = document.getElementById("btnSimpanPengesahan");
+      btn.disabled = true;
+      btn.innerText = "Menyimpan...";
+
+      const ttd = compressSignature("canvasPengesah");
+      const nama = document.getElementById("namaPengesahInput").value;
+      const today = new Date().toISOString().split('T')[0];
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "VERIFY",
+            id: currentSelectedId,
+            namaPengesah: nama,
+            tarikhPengesah: today,
+            ttdPengesah: ttd
+          })
+        });
+
+        alert("Pengesahan Pengetua berjaya disimpan!");
+        tutupModalSahkan();
+        await fetchData(true);
+      } catch (err) {
+        alert("Ralat pengesahan: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Sahkan & Simpan";
+      }
+    }
+
+    // ================= CETAKAN MENGIKUT BULAN =================
+    const NAMA_BULAN = [
+      "Januari", "Februari", "Mac", "April", "Mei", "Jun",
+      "Julai", "Ogos", "September", "Oktober", "November", "Disember"
+    ];
+
+    function inisialisasiTabCetakan() {
+      const selectBulan = document.getElementById("selectBulanCetakan");
+      const currentVal = selectBulan.value;
+
+      const bulanSet = new Set();
+      cachedLaporan.forEach(item => {
+        if (item["Tarikh"]) {
+          const parts = item["Tarikh"].split('-');
+          if (parts.length >= 2) {
+            bulanSet.add(`${parts[0]}-${parts[1]}`);
+          }
+        }
+      });
+
+      if (bulanSet.size === 0) {
+        const curY = new Date().getFullYear();
+        for (let m = 1; m <= 12; m++) {
+          bulanSet.add(`${curY}-${String(m).padStart(2, '0')}`);
+        }
+      }
+
+      const sortedBulan = Array.from(bulanSet).sort();
+      selectBulan.innerHTML = sortedBulan.map(ym => {
+        const [y, m] = ym.split('-');
+        const nama = NAMA_BULAN[parseInt(m) - 1] || m;
+        return `<option value="${ym}">${nama} ${y}</option>`;
+      }).join('');
+
+      const todayYM = new Date().toISOString().slice(0, 7);
+      if (sortedBulan.includes(todayYM) && !currentVal) {
+        selectBulan.value = todayYM;
+      } else if (currentVal) {
+        selectBulan.value = currentVal;
+      }
+
+      renderSenaraiLaporanBulan();
+    }
+
+    function renderSenaraiLaporanBulan() {
+      const ym = document.getElementById("selectBulanCetakan").value;
+      const kadContainer = document.getElementById("senaraiKadLaporanBulan");
+      const labelJumlah = document.getElementById("jumlahLaporanBulan");
+
+      const senarai = cachedLaporan.filter(item => (item["Tarikh"] || "").startsWith(ym));
+      labelJumlah.innerText = `(${senarai.length} rekod dijumpai)`;
+
+      if (senarai.length === 0) {
+        kadContainer.innerHTML = `<p style="grid-column:1/-1; font-size:12px; color:#94a3b8; padding:10px;">Tiada rekod laporan bagi bulan ini.</p>`;
+        document.getElementById("printContainer").classList.add("hidden");
+        document.getElementById("toolbarCetak").classList.add("hidden");
+        return;
+      }
+
+      kadContainer.innerHTML = senarai.map(item => {
+        const totalGambar = [item["Gambar 1"], item["Gambar 2"], item["Gambar 3"], item["Gambar 4"]].filter(Boolean).length;
+        return `
+          <div onclick="pilihDanPaparCetakan('${item["ID"]}')" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; cursor:pointer; transition:0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='#cbd5e1'">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="font-size:13px; color:var(--primary);">${item["Tarikh"]} (${item["Hari"] || ""})</strong>
+              <span class="badge" style="font-size:9px; background:${item["Status Pengesahan"] === 'Telah Disahkan' ? '#d1fae5' : '#fef3c7'}; color:${item["Status Pengesahan"] === 'Telah Disahkan' ? '#065f46' : '#92400e'};">
+                ${item["Status Pengesahan"] || "Menunggu"}
+              </span>
+            </div>
+            <div style="font-size:11px; color:#334155;">${item["Pentadbir Bertugas"]}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; font-size:10px; color:#64748b;">
+              <span>Kemaskini: ${item["Masa Kemaskini"] || item["Timestamp"] || "-"}</span>
+              ${totalGambar > 0 ? `<span style="color:#4338ca; font-weight:700;">📷 ${totalGambar}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function pilihDanBukaCetakan(id) {
+      switchTab('cetakan');
+      pilihDanPaparCetakan(id);
+    }
+
+    function pilihDanPaparCetakan(id) {
+      const item = cachedLaporan.find(r => r["ID"] === id);
+      if (!item) return;
+
+      document.getElementById("pTarikh").innerText = item["Tarikh"] || "-";
+      document.getElementById("pHari").innerText = item["Hari"] || "-";
+      document.getElementById("pMasa").innerText = item["Masa"] || "-";
+      document.getElementById("pPentadbir").innerText = item["Pentadbir Bertugas"] || "-";
+      document.getElementById("pNamaPengisiBawah").innerText = item["Pentadbir Bertugas"] || "-";
+
+      const kemaskini = item["Masa Kemaskini"] || item["Timestamp"] || "-";
+      document.getElementById("pKemaskiniInfo").innerText = `Masa Kemaskini: ${kemaskini}`;
+
+      document.getElementById("pKehadiranGuru").innerText = item["Kehadiran Guru"] || "-";
+      document.getElementById("pKehadiranMurid").innerText = item["Kehadiran Murid"] || "-";
+      document.getElementById("pGuruLewat").innerText = item["Guru Lewat"] || "-";
+      document.getElementById("pMuridLewat").innerText = item["Murid Lewat"] || "-";
+
+      document.getElementById("pPerhimpunan").innerText = item["Perhimpunan"] || "-";
+      document.getElementById("pRingkasanPerhimpunan").innerText = item["Ringkasan Perhimpunan"] || "-";
+      document.getElementById("pSuasanaUmum").innerText = item["Suasana Umum"] || "-";
+
+      document.getElementById("pIkutJadual").innerText = item["Guru Ikut Jadual"] || "-";
+      document.getElementById("pKelasTanpaGuru").innerText = item["Kelas Tanpa Guru"] || "-";
+      document.getElementById("pPemantauanPdp").innerText = item["Pemantauan PdP"] || "-";
+
+      document.getElementById("pKesDisiplin").innerText = item["Kes Disiplin"] || "-";
+      document.getElementById("pTindakanDisiplin").innerText = item["Tindakan Disiplin"] || "-";
+
+      document.getElementById("pKeadaanTandas").innerText = item["Keadaan Tandas"] || "-";
+      document.getElementById("pKeadaanKelas").innerText = item["Keadaan Kelas"] || "-";
+      document.getElementById("pKemudahanRosak").innerText = item["Isu Kemudahan Rosak"] || "-";
+      document.getElementById("pCatatanTambahan").innerText = item["Catatan Tambahan"] || "-";
+
+      // Gambar Lampiran Pemantauan pada Cetakan
+      const imgs = [item["Gambar 1"], item["Gambar 2"], item["Gambar 3"], item["Gambar 4"]].filter(Boolean);
+      const pSection = document.getElementById("pSectionGambar");
+      const pGrid = document.getElementById("pGridGambar");
+
+      if (imgs.length > 0) {
+        pSection.classList.remove("hidden");
+        pGrid.innerHTML = imgs.map((imgSrc, idx) => `
+          <div style="border:1px solid #cbd5e1; border-radius:4px; padding:4px; background:#fff; text-align:center;">
+            <img src="${imgSrc}" style="width:100%; height:130px; object-fit:contain; border-radius:3px;" alt="Lampiran ${idx + 1}">
+            <p style="font-size:10px; color:#64748b; margin-top:2px;">Gambar ${idx + 1}</p>
+          </div>
+        `).join('');
+      } else {
+        pSection.classList.add("hidden");
+        pGrid.innerHTML = "";
+      }
+
+      // Tandatangan Pengisi
+      const imgPengisi = document.getElementById("imgTtdPengisi");
+      const noTtdPengisi = document.getElementById("noTtdPengisi");
+      if (item["Tandatangan Pengisi"]) {
+        imgPengisi.src = item["Tandatangan Pengisi"];
+        imgPengisi.classList.remove("hidden");
+        noTtdPengisi.classList.add("hidden");
+      } else {
+        imgPengisi.classList.add("hidden");
+        noTtdPengisi.classList.remove("hidden");
+      }
+
+      // Tandatangan Pengetua
+      const imgPengesah = document.getElementById("imgTtdPengesah");
+      const noTtdPengesah = document.getElementById("noTtdPengesah");
+      if (item["Tandatangan Pengesah"]) {
+        imgPengesah.src = item["Tandatangan Pengesah"];
+        imgPengesah.classList.remove("hidden");
+        noTtdPengesah.classList.add("hidden");
+        document.getElementById("pNamaPengesah").innerText = item["Nama Pengesah"] || "PENGETUA";
+        document.getElementById("pTarikhPengesah").innerText = item["Tarikh Pengesah"] || "-";
+      } else {
+        imgPengesah.classList.add("hidden");
+        noTtdPengesah.classList.remove("hidden");
+        document.getElementById("pNamaPengesah").innerText = "................................................";
+        document.getElementById("pTarikhPengesah").innerText = "................................................";
+      }
+
+      document.getElementById("printContainer").classList.remove("hidden");
+      document.getElementById("toolbarCetak").classList.remove("hidden");
+      document.getElementById("printContainer").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ================= INITIALIZATION =================
+    window.addEventListener("DOMContentLoaded", () => {
+      setupCanvas("canvasPengisi");
+      setupCanvas("canvasPengesah");
+      initMingguDropdown();
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById("tarikh").value = today;
+      onTarikhChange();
+
+      fetchData();
+    });
   </script>
 </body>
 </html>

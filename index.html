@@ -96,20 +96,20 @@
     </div>
 
     <!-- 1. PUZZLE MOSAIC 3x4 (12 JUBIN VERTIKAL) -->
-    <section id="puzzleSection" class="bg-white rounded-2xl shadow-sm p-5 md:p-6 border border-slate-200 ease-fluid">
-      <div class="text-center mb-5">
+    <section id="puzzleSection" class="bg-white rounded-2xl shadow-sm p-5 md:p-6 border border-slate-200 ease-fluid space-y-5">
+      <div class="text-center">
         <div class="inline-flex items-center gap-2 px-3 py-1 bg-sky-50 text-sky-800 text-xs font-bold rounded-full mb-2">
           <span>SUSUNAN 3 &times; 4 (12 JUBIN MISTERI VERTIKAL)</span>
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
         </div>
         <h2 class="text-lg md:text-xl font-black text-slate-800 mb-1">PUZZLE GAMBAR MISTERI RBT</h2>
         <p class="text-xs md:text-sm text-slate-600 max-w-2xl mx-auto">
-          Setiap jubin yang dibuka akan kekal terbuka untuk tatapan rakan sekelas secara langsung!
+          Setiap jubin yang berjaya dibuka akan kekal terbuka untuk tatapan rakan sekelas secara langsung!
         </p>
       </div>
 
       <!-- Kotak Grid Puzzle 3x4 Vertikal -->
-      <div class="max-w-sm mx-auto mb-5">
+      <div class="max-w-sm mx-auto">
         <div class="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border-4 border-slate-900 shadow-xl bg-slate-900 flex items-center justify-center">
           <img id="mainPuzzleImage" src="gambar2.png" alt="Gambar Rahsia" class="absolute inset-0 w-full h-full object-cover select-none z-10" />
           <div id="puzzleBoard" class="absolute inset-0 grid grid-cols-3 grid-rows-4 gap-0.5 z-20">
@@ -123,6 +123,23 @@
         <button onclick="openGuessModal()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold py-3 px-6 rounded-xl shadow-md transition ease-fluid flex items-center justify-center gap-2 text-sm tracking-wide">
           <i class="fa-solid fa-lightbulb text-yellow-200"></i> TEKA GAMBAR INI SEKARANG
         </button>
+      </div>
+
+      <!-- BAHAGIAN HADAPAN: SENARAI JUBIN & MURID YANG TELAH MEMBUKA JUBIN -->
+      <div class="pt-5 border-t border-slate-100">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h3 class="text-xs md:text-sm font-black text-slate-800 uppercase flex items-center gap-2">
+            <i class="fa-solid fa-award text-amber-500 text-base"></i> Senarai Jubin Yang Telah Dibuka
+          </h3>
+          <span id="tilesProgressBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800">
+            0 / 12 Jubin Terbuka
+          </span>
+        </div>
+
+        <!-- Grid Status 12 Jubin & Nama Murid -->
+        <div id="unlockedTilesListContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+          <!-- Dijana Secara Automatik & Segerak oleh JS -->
+        </div>
       </div>
     </section>
 
@@ -161,7 +178,7 @@
               class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-sky-500 bg-slate-50" 
             />
             <p class="text-[11px] text-slate-500 mt-1 font-semibold flex items-center gap-1">
-              <i class="fa-solid fa-circle-exclamation text-amber-500"></i> Peringatan: Masukkan angka nombor IC sahaja tanpa tanda sempang (-).
+              <i class="fa-solid fa-circle-exclamation text-amber-500"></i> Peringatan: Masukkan angka nombor IC sahaja tanpa sebarang tanda sempang (-).
             </p>
           </div>
 
@@ -406,7 +423,7 @@
 
     // Senarai 49 Murid Kelas 3S1 dan 3S2
     let STUDENTS_DATA = [
-      // KELAS 3S1 (26 Murid)[cite: 2]
+      // KELAS 3S1 (26 Murid)
       { nama: "ADAM HAFIY BIN ROHAIZAD", noIc: "111016010759", ic: "111016010759", sudahBuka: false },
       { nama: "AHMAD IRFAN DANIEL BIN AHMAD FAZRIN", noIc: "111105010857", ic: "111105010857", sudahBuka: false },
       { nama: "CHIU YIT JEN", noIc: "110812010851", ic: "110812010851", sudahBuka: false },
@@ -434,7 +451,7 @@
       { nama: "RAM JAGANNATH A/L SURESH", noIc: "111113011083", ic: "111113011083", sudahBuka: false },
       { nama: "SOH FEI XUAN", noIc: "111005010358", ic: "111005010358", sudahBuka: false },
 
-      // KELAS 3S2 (23 Murid)[cite: 3]
+      // KELAS 3S2 (23 Murid)
       { nama: "ADRIAN", noIc: "111207060759", ic: "111207060759", sudahBuka: false },
       { nama: "AMMAR QALISH BIN KHAIRUL ANUAR", noIc: "111217010405", ic: "111217010405", sudahBuka: false },
       { nama: "FOM YU TONG", noIc: "111116011660", ic: "111116011660", sudahBuka: false },
@@ -528,6 +545,64 @@
       if (curG) guessSelect.value = curG;
     }
 
+    // Paparkan senarai jubin yang telah dibuka di hadapan portal
+    function renderFrontUnlockedList(tilesDetail) {
+      const container = document.getElementById("unlockedTilesListContainer");
+      const progressBadge = document.getElementById("tilesProgressBadge");
+      if (!container) return;
+
+      container.innerHTML = "";
+      let openedCount = 0;
+
+      for (let i = 1; i <= 12; i++) {
+        const tInfo = (tilesDetail && tilesDetail.find(t => t.noJubin === i)) || {
+          noJubin: i,
+          opened: openedTilesSet.has(i),
+          dibukaOleh: ""
+        };
+
+        if (tInfo.opened) openedCount++;
+
+        const card = document.createElement("div");
+        card.className = `p-2.5 rounded-xl border flex items-center gap-2.5 transition ease-fluid ${
+          tInfo.opened
+            ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-sm'
+            : 'bg-slate-50/60 border-slate-200 text-slate-400'
+        }`;
+
+        card.innerHTML = `
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs shrink-0 ${
+            tInfo.opened ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-200 text-slate-500'
+          }">
+            ${i}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-[9px] font-extrabold uppercase tracking-wider ${tInfo.opened ? 'text-emerald-700' : 'text-slate-400'}">
+              JUBIN ${i}
+            </div>
+            <div class="text-xs font-black truncate leading-tight ${tInfo.opened ? 'text-slate-800' : 'text-slate-400 italic'}">
+              ${tInfo.opened ? (tInfo.dibukaOleh || 'Murid RBT') : 'Belum Dibuka'}
+            </div>
+          </div>
+          <div class="shrink-0 text-sm pr-1">
+            ${tInfo.opened 
+              ? '<i class="fa-solid fa-lock-open text-emerald-600" title="Terbuka"></i>' 
+              : '<i class="fa-solid fa-lock text-slate-300" title="Terkunci"></i>'}
+          </div>
+        `;
+        container.appendChild(card);
+      }
+
+      if (progressBadge) {
+        progressBadge.textContent = `${openedCount} / 12 Jubin Terbuka`;
+        if (openedCount === 12) {
+          progressBadge.className = "text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 animate-pulse";
+        } else {
+          progressBadge.className = "text-[11px] font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800";
+        }
+      }
+    }
+
     async function refreshDataFromServer(showSpin = true) {
       const syncIcon = document.getElementById("syncIcon");
       if (showSpin && syncIcon) syncIcon.classList.add("fa-spin");
@@ -562,6 +637,9 @@
               const el = document.getElementById(`tile-${num}`);
               if (el) el.classList.add("unlocked");
             });
+
+            // Kemas kini senarai hadapan portal & panel guru
+            renderFrontUnlockedList(data.tilesDetail);
             if (!document.getElementById("adminDashboard").classList.contains("hidden")) {
               renderAdminPreviewGrid();
             }
@@ -657,7 +735,7 @@
         if (sel && sel.value === item.answer) score++;
       });
 
-      // Rerekodkan percubaan murid terus ke Google Apps Script / Sheet Admin
+      // Rerekodkan percubaan murid terus ke Google Sheet Admin
       try {
         fetch(`${SCRIPT_URL}?action=recordQuiz&nama=${encodeURIComponent(currentStudent.nama)}&skor=${score}&_t=${Date.now()}`);
       } catch (err) {
@@ -933,6 +1011,7 @@
           if (el) el.classList.remove("unlocked");
         }
         renderAdminPreviewGrid();
+        renderFrontUnlockedList([]);
         fetchAdminQuizRecords();
         fetchAdminGuesses();
         alert("Berjaya di-reset!");
